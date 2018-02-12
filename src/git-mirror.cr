@@ -1,6 +1,12 @@
 require "./git-mirror/*"
+require "./git-mirror/controllers/*"
+require "kemal"
+require "crecto"
 
-# TODO: Write documentation for `Git::Mirror`
-module Git::Mirror
-  # TODO: Put your code here
+get "/" do
+   "Hello world"
 end
+
+Kemal.run
+
+

@@ -11,6 +11,14 @@ targets:
 dependencies:
   kemal:
     github: kemalcr/kemal
+  pg:
+    github: will/crystal-pg
+  crecto:
+    github: fridgerator/crecto
+  migrate:
+    github: vladfaust/migrate.cr
+  sam:
+    github: imdrasil/sam.cr
 
 crystal: 0.24.1
 

@@ -1,0 +1,14 @@
+defaults : &defaults
+  host: localhost
+  adapter: postgres
+  user: crystal
+  password: crystal
+  migration_files_path: ./src/migrations
+
+development:
+  db: crystal
+  <<: *defaults
+
+  test:
+    db: jennifer_test
+    <<: *defaults
