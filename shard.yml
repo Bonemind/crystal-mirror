@@ -1,0 +1,17 @@
+name: git-mirror
+version: 0.1.0
+
+authors:
+  - Subhi Dweik <subhi@rockstars.nl>
+
+targets:
+  git-mirror:
+    main: src/git-mirror.cr
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+
+crystal: 0.24.1
+
+license: MIT
