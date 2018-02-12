@@ -1,11 +1,13 @@
 require "crecto"
 require "./token"
+require "./repository"
 
 class User < Crecto::Model
    schema "users" do
       field :name, String
       field :password, String
       has_many :tokens, Token, dependent: :destroy
+      has_many :repositories, Repository, dependent: :destroy
    end
 
    def create_token

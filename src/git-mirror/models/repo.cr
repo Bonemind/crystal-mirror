@@ -5,7 +5,7 @@ module Repo
    extend Crecto::Repo
 
    config do |conf|
-      conf.adapter = Crecto::Adapters::Postgres # or Crecto::Adapters::Mysql or Crecto::Adapters::SQLite3
+      conf.adapter = Crecto::Adapters::Postgres
       conf.database = "crystal"
       conf.hostname = "localhost"
       conf.username = "crystal"

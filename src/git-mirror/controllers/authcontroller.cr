@@ -5,6 +5,11 @@ require "../models/repo"
 require "../models/user"
 require "../models/token"
 
+macro halt_401(env)
+   env.response.content_type = "application/json"
+   halt env, status_code: 401, response: ({ message: "Invalid username or password" }).to_json
+end
+
 delete "/auth/logout" do |env|
    env.response.content_type = "application/json"
    user = env.current_user.not_nil!
@@ -24,11 +29,11 @@ post "/auth/login" do |env|
    password = env.params.json["password"].as(String)
    user = Repo.get_by(User, name: name)
    if user.nil?
-      next halt_401(env)
+      halt_401 env
    end
    user = user.as(User) unless user.nil?
    user_password = Crypto::Bcrypt::Password.new(user.password.not_nil!)
-   next halt_401(env) unless user_password == password
+   halt_401 env unless user_password == password
 
    env.response.content_type = "application/json"
    next user.create_token.to_json
@@ -40,8 +45,3 @@ get "/auth/me" do |env|
    next user.to_json
 end
 
-def halt_401(env)
-   env.response.status_code = 401
-   env.response.print ({ message: "Invalid username or password" }).to_json
-   env.response.close
-end
