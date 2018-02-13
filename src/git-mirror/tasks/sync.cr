@@ -1,35 +1,26 @@
 require "../models/repo"
 require "../models/repository"
+require "../utils/command_runner"
+require "../utils/config_reader"
 require "io"
 require "file_utils"
 require "dispatch"
 
-def run_command(command, dir)
-   output = IO::Memory.new
-   error = IO::Memory.new
-   status = Process.run("sh", {"-c", command}, output: output, error: error, chdir: dir)
-   result = { output: output.to_s, error: error.to_s, status: status.exit_status }
-   output.close
-   error.close
-   return result
-end
-
-def sync_repo(id : Int64 | Int32 | Nil)
+def sync_repo(id : Int64 | Int32 | Nil, ssh_key_path, git_dir)
    return if id.nil?
    repo = Repo.get(Repository, id)
    return if repo.nil?
    repo = repo.as(Repository)
-   sync_repo(repo)
+   sync_repo(repo, ssh_key_path, git_dir)
 end
 
-def sync_repo(repo : Repository)
+def sync_repo(repo : Repository, ssh_key_path, git_dir)
    puts repo.from_url
    puts repo.to_url
 
-   ssh_command = "GIT_SSH_COMMAND='ssh -i /tmp/sshtest/1 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'"
+   ssh_command = "GIT_SSH_COMMAND='ssh -i #{ssh_key_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'"
 
-   target_dir = "/tmp/#{repo.id}"
-
+   target_dir = "#{git_dir}/#{repo.id}"
    # Remove the directory if it exists
    # Makes sure we start with a clean repo
    if Dir.exists?(target_dir)
@@ -48,17 +39,17 @@ def sync_repo(repo : Repository)
    puts result
 end
 
-def sync_all
+def sync_all(ssh_key_path, git_root_dir)
    repos = Repo.all(Repository)
    repos.each do |r|
-      sync_repo(r)
+      sync_repo(r, ssh_key_path, git_root_dir)
    end
 end
 
 class SyncAllTask
    include Dispatchable
 
-   def perform
+   def perform(ssh_key_path, git_root_dir)
       sync_all
    end
 end
@@ -66,11 +57,11 @@ end
 class SyncRepoTask
    include Dispatchable
 
-   def perform(repo : Repository)
-      sync_repo(repo)
+   def perform(repo : Repository, ssh_key_path, git_dir)
+      sync_repo(repo, ssh_key_path, git_dir)
    end
 
-   def perform(id)
-      sync_repo(id)
+   def perform(id, ssh_key_path, git_dir)
+      sync_repo(id, ssh_key_path, git_dir)
    end
 end

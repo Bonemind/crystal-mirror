@@ -1,14 +1,33 @@
-defaults : &defaults
-  host: localhost
-  adapter: postgres
-  user: crystal
-  password: crystal
-  migration_files_path: ./src/migrations
+defaults :
+  db: &db
+    host: localhost
+    adapter: postgres
+    user: crystal
+    password: crystal
+    database: crystal
+    port: 5432
+    migration_files_path: ./src/migrations
+  ssh: &ssh
+    keys_dir: /tmp/mirror_keys
+  git: &git
+    repo_dir: /tmp/git_mirrors
 
 development:
-  db: crystal
-  <<: *defaults
+  db:
+    <<: *db
+    database: crystal
+    user: something
+  ssh:
+    <<: *ssh
+  git:
+    <<: *git
 
-  test:
-    db: jennifer_test
-    <<: *defaults
+test:
+  db:
+    <<: *db
+    database: crystal
+    user: something
+  ssh:
+    <<: *ssh
+  git:
+    <<: *git

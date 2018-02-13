@@ -3,6 +3,7 @@ require "../models/repo"
 require "../models/repository"
 require "../utils/validator"
 require "../utils/response_macros"
+require "../tasks/sync"
 
 get "/repositories" do |env|
    env.response.content_type = "application/json"
@@ -15,6 +16,15 @@ get "/repositories/:id" do |env|
    repository = Repo.get(Repository, env.params.url["id"].to_i)
    not_found(env) if repository.nil?
    next repository.to_json
+end
+
+post "/repositories/:id/sync" do |env|
+   env.response.content_type = "application/json"
+   repository = Repo.get(Repository, env.params.url["id"].to_i)
+   not_found(env) if repository.nil?
+   #SyncRepoTask.dispatch(repository)
+
+   next { message: "Task queued" }.to_json
 end
 
 
