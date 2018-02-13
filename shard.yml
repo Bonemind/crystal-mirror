@@ -19,8 +19,9 @@ dependencies:
     github: vladfaust/migrate.cr
   sam:
     github: imdrasil/sam.cr
-  kemal-auth-token:
-    github: akwiatkowski/kemal-auth-token
+  quartz:
+    github: andrewhamon/quartz
+    version: ~> 0.1.1
 
 crystal: 0.24.1
 

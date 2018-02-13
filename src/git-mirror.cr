@@ -3,12 +3,15 @@ require "./git-mirror/controllers/*"
 require "./git-mirror/middleware/*"
 require "kemal"
 require "crecto"
+require "quartz"
+
 
 token_auth
 
-get "/" do
-   "Hello world"
+# Execute block every second
+Quartz::PeriodicTimer.new(1) do
 end
+
 
 Kemal.run
 

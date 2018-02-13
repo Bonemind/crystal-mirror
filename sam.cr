@@ -1,6 +1,7 @@
 require "pg"
 require "sam"
 require "migrate"
+require "./src/git-mirror/tasks/poll_repos"
 
 Sam.namespace "db" do
   migrator = Migrate::Migrator.new(
@@ -20,6 +21,12 @@ Sam.namespace "db" do
   task "rollback" do
      migrator.down
   end
+end
+
+Sam.namespace "repos" do
+   task "sync" do
+      sync_all
+   end
 end
 
 Sam.help
