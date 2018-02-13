@@ -8,6 +8,10 @@ shards:
     github: crystal-lang/crystal-db
     version: 0.5.0
 
+  dispatch:
+    github: bmulvihill/dispatch
+    version: 0.1.0
+
   kemal:
     github: kemalcr/kemal
     version: 0.22.0

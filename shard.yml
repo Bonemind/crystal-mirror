@@ -22,6 +22,8 @@ dependencies:
   quartz:
     github: andrewhamon/quartz
     version: ~> 0.1.1
+  dispatch:
+    github: bmulvihill/dispatch
 
 crystal: 0.24.1
 
