@@ -42,11 +42,9 @@ Sam.namespace "repos" do
 
    task "sync_by_id" do |t, args|
       id = args.named["id"].to_i
-      user = args.named["user"]
 
       config = get_current_config
-      ssh_path = "#{config["ssh"]["keys_dir"].as_s}/#{user}"
-      sync_repo(id, ssh_path, config["git"]["repo_dir"].as_s)
+      sync_repo(id, config["ssh"]["keys_dir"].as_s, config["git"]["repo_dir"].as_s)
    end
 end
 

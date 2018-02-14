@@ -5,24 +5,35 @@ require "../utils/validator"
 require "../utils/response_macros"
 require "../tasks/sync"
 
+macro get_user_repo
+   repository = Repo.get(Repository, env.params.url["id"].to_i)
+   not_found(env) if repository.nil?
+   forbidden(env) unless env.current_user.not_nil!.id == repository.user_id
+   repository = repository.as(Repository)
+end
+
 get "/repositories" do |env|
    env.response.content_type = "application/json"
-   repositories = Repo.all(Repository)
+   repositories = Repo.get_association(env.current_user.not_nil!, :repositories)
    repositories.as(Array).to_json
 end
 
 get "/repositories/:id" do |env|
    env.response.content_type = "application/json"
-   repository = Repo.get(Repository, env.params.url["id"].to_i)
-   not_found(env) if repository.nil?
+   repository = Nil
+   get_user_repo
    next repository.to_json
 end
 
 post "/repositories/:id/sync" do |env|
    env.response.content_type = "application/json"
-   repository = Repo.get(Repository, env.params.url["id"].to_i)
-   not_found(env) if repository.nil?
-   #SyncRepoTask.dispatch(repository)
+   repository = Nil
+   get_user_repo
+   SyncRepoTask.dispatch(
+      repository,
+      Kemal.config.env_config["ssh"]["keys_dir"],
+      Kemal.config.env_config["git"]["repo_dir"]
+   )
 
    next { message: "Task queued" }.to_json
 end
@@ -41,10 +52,8 @@ end
 
 put "/repositories/:id" do |env|
    env.response.content_type = "application/json"
-   repository = Repo.get(Repository, env.params.url["id"].to_i)
-   if repository.nil?
-      halt env, status_code: 404, response: {message: "Not found"}.to_json
-   end
+   repository = Nil
+   get_user_repo
    if env.params.json["from_url"]?
       repository.from_url = env.params.json["from_url"].as(String)
    end
@@ -60,8 +69,8 @@ end
 
 delete "/repositories/:id" do |env|
    env.response.content_type = "application/json"
-   repository = Repo.get(Repository, env.params.url["id"].to_i)
-   not_found(env) if repository.nil?
+   repository = Nil
+   get_user_repo
    Repo.delete(repository)
    env.response.status_code = 204
 end

@@ -16,7 +16,6 @@ development:
   db:
     <<: *db
     database: crystal
-    user: something
   ssh:
     <<: *ssh
   git:

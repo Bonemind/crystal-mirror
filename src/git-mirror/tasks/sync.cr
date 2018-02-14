@@ -18,7 +18,7 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    puts repo.from_url
    puts repo.to_url
 
-   ssh_command = "GIT_SSH_COMMAND='ssh -i #{ssh_key_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'"
+   ssh_command = "GIT_SSH_COMMAND='ssh -i #{ssh_key_path}/#{repo.user_id} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'"
 
    target_dir = "#{git_dir}/#{repo.id}"
    # Remove the directory if it exists
