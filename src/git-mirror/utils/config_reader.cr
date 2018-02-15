@@ -13,7 +13,7 @@ def get_current_config
 end
 
 def get_env_config(env)
-   config = YAML.parse(File.read("./config/db.yml"))
+   config = YAML.parse(File.read("./config.yml"))
    env_config = config[env]
    return env_config
 end
