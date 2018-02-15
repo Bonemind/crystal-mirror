@@ -32,7 +32,7 @@ post "/users" do |env|
    user = User.new
    user.name = env.params.json["name"].as(String)
    input_password = env.params.json["password"].as(String)
-   user.password = Crypto::Bcrypt::Password.create(input_password, cost: 10).to_s
+   user.password = Crypto::Bcrypt::Password.create(input_password).to_s
    validate_model(user, User)
    puts User.changeset(user).valid?
    user = Repo.insert(user)

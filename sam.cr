@@ -5,8 +5,10 @@ require "./src/git-mirror/utils/config_reader"
 require "./src/git-mirror/tasks/sync"
 require "./src/git-mirror/models/repo"
 require "./src/git-mirror/models/repository"
+require "./src/git-mirror/models/user"
 require "dispatch"
 require "io"
+require "crypto/bcrypt/password"
 require "yaml"
 
 def wait_for_dispatch
@@ -64,7 +66,19 @@ Sam.namespace "repos" do
    end
 end
 
-Sam.namespace "test" do
+Sam.namespace "user" do
+   task "create" do |t, args|
+      config = get_current_config
+      username = args.named["username"].to_s
+      password = args.named["password"].to_s
+
+      user = User.new
+      user.name = username
+      user.password = Crypto::Bcrypt::Password.create(password).to_s
+      user = Repo.insert(user).instance
+      user.create_ssh_key(config["ssh"]["keys_dir"])
+      puts "Created user, assigned id: #{user.id}"
+   end
 end
 
 Sam.help
