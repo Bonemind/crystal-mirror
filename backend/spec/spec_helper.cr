@@ -1,2 +1,2 @@
 require "spec"
-require "../src/git-mirror"
+require "../src/crystal-mirror"

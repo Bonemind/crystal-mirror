@@ -1,12 +1,12 @@
-name: git-mirror
+name: crystal-mirror
 version: 0.1.0
 
 authors:
-  - Subhi Dweik <subhi@rockstars.nl>
+  - Subhi Dweik
 
 targets:
-  git-mirror:
-    main: src/git-mirror.cr
+  crystal-mirror:
+    main: src/crystal-mirror.cr
 
 dependencies:
   kemal:
