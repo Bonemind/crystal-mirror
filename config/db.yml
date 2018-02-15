@@ -11,6 +11,9 @@ defaults :
     keys_dir: /tmp/mirror_keys
   git: &git
     repo_dir: /tmp/git_mirrors
+  dispatch: &dispatch
+    queue_size: 1000
+    workers: 5
 
 development:
   db:
@@ -20,6 +23,8 @@ development:
     <<: *ssh
   git:
     <<: *git
+  dispatch:
+    <<: *dispatch
 
 test:
   db:
@@ -30,3 +35,5 @@ test:
     <<: *ssh
   git:
     <<: *git
+  dispatch:
+    <<: *dispatch

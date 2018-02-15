@@ -37,7 +37,7 @@ post "/users" do |env|
    puts User.changeset(user).valid?
    user = Repo.insert(user)
    validate_changeset(user)
-   user.instance.create_ssh_key
+   user.instance.create_ssh_key(Kemal.config.env_config["ssh"]["keys_dir"])
    next user.instance.to_json
 end
 

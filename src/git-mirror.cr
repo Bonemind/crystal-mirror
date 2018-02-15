@@ -14,20 +14,22 @@ module Kemal
 	end
 end
 
-get "/config" do |env|
-	env.response.content_type = "application/json"
-	next {a: "b"}.to_json
-end
-
-
 token_auth
 
 puts "Current env: #{get_env}"
 env_config = get_env_config(Kemal.config.env)
 Kemal.config.env_config = env_config
 
+configure_dispatch
+
 # Execute block every second
-Quartz::PeriodicTimer.new(1) do
+Quartz::PeriodicTimer.new(60) do
+	# Schedule any repos for polling that need it
+	# TODO: probably useful to introduce some kind of lock
+	SchedulePollsTask.dispatch(
+		env_config["ssh"]["keys_dir"].as_s,
+		env_config["git"]["repo_dir"].as_s
+	)
 end
 
 

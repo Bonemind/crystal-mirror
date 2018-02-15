@@ -23,7 +23,7 @@ class User < Crecto::Model
       key_file = "#{path}/#{self.id}"
       File.delete(key_file) if File.exists?(key_file)
       File.delete("#{key_file}.pub") if File.exists?("#{key_file}.pub")
-      run_command("ssh-keygen -f #{self.id} -P \"\"", path)
+      run_command("ssh-keygen -f #{self.id} -P \"\"", "#{path}")
    end
 
    validate_required [:name, :password]

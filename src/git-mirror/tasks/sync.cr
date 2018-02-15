@@ -31,12 +31,19 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    # Bare clone, see https://help.github.com/articles/duplicating-a-repository/
    git_command = "git clone --bare #{repo.from_url} ./"
    result = run_command("#{ssh_command} #{git_command}", target_dir)
-   puts result
+   if result[:status] != 0
+      puts result
+      return
+   end
 
    # Push to new upstream
    git_push_command = "git push --mirror #{repo.to_url}"
    result = run_command("#{ssh_command} #{git_push_command}", target_dir)
-   puts result
+
+   if result[:status] == 0
+      repo.last_polled = Time.now
+      Repo.update(repo)
+   end
 end
 
 def sync_all(ssh_key_path, git_root_dir)
@@ -46,11 +53,37 @@ def sync_all(ssh_key_path, git_root_dir)
    end
 end
 
+def schedule_polls(ssh_key_path, git_root_dir)
+   repositories = Repo.all(Repository).as(Array)
+
+   repositories.each do |r|
+      if r.poll_interval == 0
+         # Polling disabled, skip
+         next
+      elsif r.last_polled.nil?
+         # We want to poll and have never successfully polled, poll
+         SyncRepoTask.dispatch(r, ssh_key_path, git_root_dir)
+      elsif (Time.now - r.last_polled.not_nil!).total_minutes > r.poll_interval.not_nil!
+         # Our last poll is older than our defined interval, poll
+         SyncRepoTask.dispatch(r, ssh_key_path, git_root_dir)
+      end
+   end
+end
+
+
 class SyncAllTask
    include Dispatchable
 
    def perform(ssh_key_path, git_root_dir)
       sync_all
+   end
+end
+
+class SchedulePollsTask
+   include Dispatchable
+
+   def perform(ssh_key_path, git_root_dir)
+      schedule_polls(ssh_key_path, git_root_dir)
    end
 end
 

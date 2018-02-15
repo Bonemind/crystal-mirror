@@ -3,15 +3,23 @@ require "sam"
 require "migrate"
 require "./src/git-mirror/utils/config_reader"
 require "./src/git-mirror/tasks/sync"
+require "./src/git-mirror/models/repo"
+require "./src/git-mirror/models/repository"
 require "dispatch"
 require "io"
 require "yaml"
 
-Dispatch.configure do |config|
-   config.num_workers = 5
-   config.queue_size = 10
-   config.logger = Logger.new(IO::Memory.new)
+def wait_for_dispatch
+   # Wait for dispatch to finish
+   # Sam tasks would exit before our fibers have done their work otherwise
+   job_channel = Dispatch::Dispatcher.instance.job_queue
+   while !job_channel.empty?
+      puts "Still syncing"
+      sleep 3
+   end
 end
+
+configure_dispatch
 
 Sam.namespace "db" do
    config = get_current_config
@@ -37,7 +45,8 @@ Sam.namespace "repos" do
    task "sync" do |t, args|
       user = args.named["user"]
       config = get_current_config
-      sync_all(config["shh"]["keys_dir"].as_s, config["git"]["repo_dir"].as_s)
+      sync_all(config["ssh"]["keys_dir"].as_s, config["git"]["repo_dir"].as_s)
+      wait_for_dispatch
    end
 
    task "sync_by_id" do |t, args|
@@ -45,13 +54,17 @@ Sam.namespace "repos" do
 
       config = get_current_config
       sync_repo(id, config["ssh"]["keys_dir"].as_s, config["git"]["repo_dir"].as_s)
+      wait_for_dispatch
+   end
+
+   task "schedule_polls" do
+      config = get_current_config
+      schedule_polls(config["ssh"]["keys_dir"].as_s, config["git"]["repo_dir"].as_s)
+      wait_for_dispatch
    end
 end
 
 Sam.namespace "test" do
-   task "parse_yaml" do
-      puts YAML.parse(File.read("./config/db.yml"))
-   end
 end
 
 Sam.help
