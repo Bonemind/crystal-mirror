@@ -1,7 +1,2 @@
-Add a create user task
-Read db config from file
-Add CORS
-ssh-keygen -f <name> -P ""
-https://superuser.com/questions/232373/how-to-tell-git-which-private-key-to-use
-GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
-  git clone user@host
+Add tests
+

@@ -1,4 +1,4 @@
-/doc/
-/lib/
-/bin/
-/.shards/
+backend/doc/
+backend/lib/
+backend/bin/
+backend/.shards/
