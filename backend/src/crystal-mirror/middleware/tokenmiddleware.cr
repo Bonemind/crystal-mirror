@@ -18,6 +18,7 @@ class TokenMiddleware < Kemal::Handler
    PREFIX = "Bearer"
 
    exclude ["/auth/login"], "POST"
+   exclude ["/*"], "OPTIONS"
 
    def call(context)
       return call_next(context) if exclude_match?(context)

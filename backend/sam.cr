@@ -27,7 +27,7 @@ Sam.namespace "db" do
    config = get_current_config
    dbconfig = config["db"]
    migrator = Migrate::Migrator.new(
-      DB.open("postgresql://#{dbconfig["user"]}:#{dbconfig["password"]}@#{dbconfig["host"]}/#{dbconfig["database"]}"),
+      DB.open("postgresql://#{dbconfig["user"]}:#{dbconfig["password"]}@#{dbconfig["host"]}:#{dbconfig["port"]}/#{dbconfig["database"]}"),
       Logger.new(STDOUT),
       File.join("migrations"), # Path to migrations
       "version", # Version table name

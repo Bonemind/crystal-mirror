@@ -34,6 +34,6 @@ Quartz::PeriodicTimer.new(60) do
 end
 
 
-Kemal.run
+Kemal.run(Kemal.config.env_config["web"]["port"].as_i)
 
 

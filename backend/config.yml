@@ -1,11 +1,13 @@
 defaults :
+  web: &web
+    port: 3200
   db: &db
     host: localhost
     adapter: postgres
     user: crystal
     password: crystal
     database: crystal
-    port: 5432
+    port: 5433
     migration_files_path: ./src/migrations
   ssh: &ssh
     keys_dir: /tmp/mirror_keys
@@ -16,6 +18,8 @@ defaults :
     workers: 5
 
 development:
+  web:
+    <<: *web
   db:
     <<: *db
     database: crystal
@@ -27,6 +31,8 @@ development:
     <<: *dispatch
 
 test:
+  web:
+    <<: *web
   db:
     <<: *db
     database: crystal

@@ -1,4 +1,4 @@
-# git-mirror
+# crystal-mirror
 
 TODO: Write a description here
 
