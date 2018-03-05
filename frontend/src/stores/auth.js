@@ -18,7 +18,6 @@ export default (state = initialState, action) => {
          }
 
       case LOGIN_SUCCEEDED:
-         console.log(action);
          return {
             ...state,
             token: action.payload.token,

@@ -3,20 +3,24 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import store, { history } from './store';
+import apiClient from './client';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
+import { Provider as RebassProvider, Flex } from 'rebass';
+
+apiClient.setStore(store);
 
 class Main extends Component {
    render() {
       return (
-         <Provider store={store}>
-            <ConnectedRouter history={history}>
-               <div>
+         <RebassProvider>
+            <Provider store={store}>
+               <ConnectedRouter history={history}>
                   <App />
-               </div>
-            </ConnectedRouter>
-         </Provider>
+               </ConnectedRouter>
+            </Provider>
+         </RebassProvider>
       )
    }
 }

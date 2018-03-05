@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { push } from 'react-router-redux';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { login } from '../modules/auth';
+import { login } from '../stores/auth';
+import { Input, Button, Label, Box } from 'rebass';
 
 class Login extends Component {
    constructor(props) {
@@ -27,25 +28,28 @@ class Login extends Component {
    }
 
    render() {
-      console.log(this.state);
+      const { username } = this.props;
       return (
-         <form onSubmit={this.handleSubmit}>
-            <label>
-               Name:
-               <input type="text" value={this.state.username} onChange={(e) => this.handleChange(e, 'username')} />
-            </label>
-            <br />
-            <label>
-               Password:
-               <input type="password" value={this.state.password} onChange={(e) => this.handleChange(e, 'password')} />
-            </label>
-            <input type="submit" value="Submit" />
-         </form>
+         <Box width={1/3} ml={"33%"}>
+            <form onSubmit={this.handleSubmit}>
+               <Label>
+                  Name:
+               </Label>
+               <Input type="text" value={this.state.username} onChange={(e) => this.handleChange(e, 'username')} />
+               <br />
+               <Label>
+                  Password:
+               </Label>
+               <Input type="password" value={this.state.password} onChange={(e) => this.handleChange(e, 'password')} />
+               <Button type="submit">Submit</Button>
+            </form>
+         </Box>
       );
    }
 }
 
 const mapStateToProps = state => ({
+   username: state.auth.username
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
