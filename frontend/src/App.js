@@ -23,8 +23,6 @@ class App extends Component {
                   <Route exact path="/login" component={Login} />
                   <Route exact path="/repositories" component={RepositoryPage} />
                </main>
-               <span onClick={() => apiClient.get('http://localhost:3200/repositories')}>TEST</span>
-
             </Box>
          </Flex>
       );

@@ -1,25 +1,31 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Box, NavLink, Divider, Flex, Text } from 'rebass';
+import { Box, Divider, Flex, Text } from 'rebass';
+import { logout } from '../stores/auth';
+import { withRouter } from 'react-router';
+import FA from 'react-fontawesome';
 
 class Header extends Component {
    render() {
-      const { username } = this.props;
+      const { username, logout, history } = this.props;
       const isAuthed = !!username;
       return (
          <Box width={1}>
             <Flex justifyContent="space-between">
-               <Box width={1/2}>
-                  <NavLink><Link to="/">Home</Link></NavLink>
-                  <NavLink><Link to="/about">About</Link></NavLink>
-                  <NavLink><Link to="/counter">Counter</Link></NavLink>
-                  <NavLink><Link to="/repositories">Repositories</Link></NavLink>
+               <Box width={1/2} style={{paddingTop: 12}}>
+                  <NavLink activeStyle={{fontWeight: 'bold'}} exact={true} to="/">Home</NavLink>&nbsp;
+                  <NavLink activeStyle={{fontWeight: 'bold'}} to="/about">About</NavLink>&nbsp;
+                  <NavLink activeStyle={{fontWeight: 'bold'}} to="/counter">Counter</NavLink>&nbsp;
+                  <NavLink activeStyle={{fontWeight: 'bold'}} to="/repositories">Repositories</NavLink>
                </Box>
                <Box width={1/3}>
-                  <Text textAlign="right" style={{ padding: 8 }}>
-                     { isAuthed ? username : <NavLink><Link to="/login">Login</Link></NavLink> }
+                  <Text textAlign="right" style={{ padding: 12 }}>
+                     { isAuthed ?
+                        <span>{username}&nbsp;<FA name="sign-out" onClick={logout} /></span> :
+                        <NavLink to="/login">Login</NavLink>
+                        }
                   </Text>
                </Box>
             </Flex>
@@ -34,9 +40,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+   logout
 }, dispatch);
 
-export default connect(
+export default withRouter(connect(
    mapStateToProps,
    mapDispatchToProps
-)(Header);
+)(Header));

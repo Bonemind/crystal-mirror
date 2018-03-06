@@ -62,7 +62,15 @@ class ApiClient {
       this.store.dispatch({type: REQUEST_START});
       return fetch(`${BASE_URL}${url}`, request).then(resp => {
          this.store.dispatch({type: REQUEST_SUCCESS});
-         return resp.json();
+         if (resp.status == 204) {
+            return {};
+         }
+         if (resp.ok) {
+            return resp.json();
+         }
+         const error = {status: resp.status, body: resp.body};
+         this.store.dispatch({ type: REQUEST_FAILURE, payload: error })
+         Promise.reject(error);
       }).catch(e => {
          this.store.dispatch({type: REQUEST_FAILURE});
          return Promise.reject(e);
