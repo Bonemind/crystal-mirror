@@ -1,8 +1,5 @@
 import { app, h } from 'hyperapp';
 import { Link, Route, location } from "@hyperapp/router"
-import Counter from './Counter';
-import Login from './Login';
-import Repositories from './Repositories';
 
 const LoginView = ({state: globalState, actions: globalActions}) => {
    const actions = globalActions.auth;

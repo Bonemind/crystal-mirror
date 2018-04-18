@@ -1,3 +1,4 @@
 export default {
-   repositories: []
+   repositories: [],
+   workingCopies: []
 }

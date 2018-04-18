@@ -32,7 +32,6 @@ class ApiClient {
    }
 
    setToken(token) {
-      console.log(token);
       this.token = token;
    }
 
@@ -42,12 +41,10 @@ class ApiClient {
 
    loadAuthData() {
       const authdata = localStorage.getItem(AUTH_KEY);
-      console.log(authdata);
       if (!authdata) {
          return;
       }
       const parsed = JSON.parse(authdata);
-      console.log(parsed);
       if (!parsed.token || !parsed.userId || !parsed.username) {
          // Stored data is different from what we expect, clear it and return
          localStorage.removeItem(AUTH_KEY);
@@ -57,7 +54,6 @@ class ApiClient {
    }
 
    authenticatedRequest(method, url, headers = {}, payload = {}) {
-      console.log(this.state);
       const authedHeaders = {...headers, ...{ 'Authorization': `Bearer ${this.token}` } }
       return this.fetch(method, url, authedHeaders, payload);
    }
