@@ -6,8 +6,6 @@ export default {
       setPassword: (password) => (form) => ({...form, ...{password}}),
    },
    setAuthData: ({username, userId, token}) => (auth) => {
-      console.log(username);
-      console.log(token);
       client.setToken(token);
       return {
          ...auth,
@@ -16,6 +14,18 @@ export default {
             username,
             userId
          },
+      }
+   },
+   clearAuthData: () => (auth) => {
+      client.setToken(null);
+      client.clearAuthData();
+      return {
+         ...auth,
+         ...{
+            token: null,
+            username: null,
+            userId: null
+         }
       }
    },
    login: () => async (state, actions) => {
@@ -27,7 +37,15 @@ export default {
          userId: data.user_id,
          token: data.uuid
       }
+      actions.loginForm.setUsername();
+      actions.loginForm.setPassword();
       actions.setAuthData(authData);
       client.saveAuthData(authData);
+   },
+   logout: () => async (state, actions) => {
+      client.authedDelete('/auth/logout').catch(e => {
+         /* swallow */
+      });
+      actions.clearAuthData();
    }
 }

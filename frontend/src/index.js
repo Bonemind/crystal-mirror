@@ -2,54 +2,19 @@ import { app, h } from 'hyperapp';
 import { Link, Route, location } from "@hyperapp/router"
 import actions from './actions';
 import state from './state';
-import Counter from './components/Counter';
-import Login from './components/Login';
-import Repositories from './components/Repositories';
 import client from './client';
+import MainView from './components/MainView';
+import LoginView from './components/LoginView';
 import 'font-awesome-webpack';
 import './main.scss';
 import "bootstrap";
 
-const view = (state, actions) => (
-   <div>
-   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Crystal mirror</a>
-      <ul class="navbar-nav px-3">
-         <li class="nav-item text-nowrap white">
-            {state.auth.username}
-            &nbsp;
-            <i onclick={() => console.log('click')} class="fa fa-sign-out" aria-hidden="true"></i>
-         </li>
-      </ul>
-   </nav>
-   <div class="container-fluid">
-
-      <div class="row">
-         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky">
-               <ul class="nav flex-column">
-                  <li class="nav-item">
-                     <Link class="nav-link" to="/">Home</Link>
-                  </li>
-                  <li class="nav-item">
-                     <Link class="nav-link" to="/login">Login</Link>
-                  </li>
-                  <li class="nav-item">
-                     <Link class="nav-link" to="/repositories">Repositories</Link>
-                  </li>
-               </ul>
-            </div>
-         </nav>
-         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <Route path="/" render={() => Counter(state, actions)} />
-            <Route path="/login" render={() => Login(state, actions)} />
-            <Route path="/repositories" render={() => Repositories(state, actions)} />
-         </main>
-      </div>
-   </div>
-   </div>
-);
-
+const view = (state, actions) => {
+   if (state.auth.username) {
+      return (<MainView state={state} actions={actions} />);
+   }
+   return (<LoginView state={state} actions={actions} />)
+}
 
 const wrappedActions = app(
    state,

@@ -27,6 +27,10 @@ class ApiClient {
       localStorage.setItem(AUTH_KEY, stringified);
    }
 
+   clearAuthData() {
+      localStorage.removeItem(AUTH_KEY);
+   }
+
    setToken(token) {
       console.log(token);
       this.token = token;
