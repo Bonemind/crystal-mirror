@@ -1,6 +1,7 @@
 import { app, h } from 'hyperapp';
 import { Link, Route, location } from "@hyperapp/router"
 import Counter from './Counter';
+import User from './User';
 import Repositories from './Repositories';
 
 const MainView = ({state, actions}) => (
@@ -27,12 +28,16 @@ const MainView = ({state, actions}) => (
                   <li class="nav-item">
                      <Link class="nav-link" to="/repositories">Repositories</Link>
                   </li>
+                  <li class="nav-item">
+                     <Link class="nav-link" to="/user">Profile</Link>
+                  </li>
                </ul>
             </div>
          </nav>
          <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <Route path="/" render={() => Counter(state, actions)} />
             <Route path="/repositories" render={() => Repositories(state, actions)} />
+            <Route path="/user" render={() => User(state, actions)} />
          </main>
       </div>
    </div>

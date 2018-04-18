@@ -81,7 +81,7 @@ class ApiClient {
          }
          const error = {status: resp.status, body: resp.body};
          //this.store.dispatch({ type: REQUEST_FAILURE, payload: error })
-         Promise.reject(error);
+         return Promise.reject(error);
       }).catch(e => {
          //this.store.dispatch({type: REQUEST_FAILURE});
          return Promise.reject(e);

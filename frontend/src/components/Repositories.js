@@ -1,6 +1,7 @@
 import { h } from 'hyperapp';
 import $ from 'jquery';
 import ConfirmModal from './ConfirmModal';
+import client from '../client';
 
 const createRepoLine = (repo, actions) => {
    return (
@@ -57,25 +58,28 @@ const createRepoEditLine = (repo, actions) => {
 };
 
 
-export default ({ repositories: state }, { repositories: actions }) =>
-   <div class="table-responsive" oncreate={() => actions.loadRepositories()}>
-      <h2>Repositories</h2>
-      <table class="table table-striped table-sm">
-         <thead>
-            <tr>
-               <th>From</th>
-               <th>To</th>
-               <th>Poll Interval</th>
-               <th><i onclick={() => actions.addWorkingCopy()} class="pointer fa fa-plus"/></th>
-            </tr>
-         </thead>
-         <tbody>
-            { state.repositories.map(r => {
-               const workingCopy = state.workingCopies.filter(e => e.id == r.id);
-               return workingCopy.length > 0 ? createRepoEditLine(workingCopy[0], actions) : createRepoLine(r, actions);
+export default ({ repositories: state }, { repositories: actions }) => {
+   return (
+      <div class="table-responsive" oncreate={() => actions.loadRepositories()}>
+         <h2>Repositories</h2>
+         <table class="table table-striped table-sm">
+            <thead>
+               <tr>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Poll Interval</th>
+                  <th><i onclick={() => actions.addWorkingCopy()} class="pointer fa fa-plus"/></th>
+               </tr>
+            </thead>
+            <tbody>
+               { state.repositories.map(r => {
+                  const workingCopy = state.workingCopies.filter(e => e.id == r.id);
+                  return workingCopy.length > 0 ? createRepoEditLine(workingCopy[0], actions) : createRepoLine(r, actions);
                }
-            )}
-            { state.workingCopies.filter(r => (r.id + '').startsWith('new')).map(r => createRepoEditLine(r, actions)) }
-         </tbody>
-      </table>
-   </div>;
+               )}
+               { state.workingCopies.filter(r => (r.id + '').startsWith('new')).map(r => createRepoEditLine(r, actions)) }
+            </tbody>
+         </table>
+      </div>
+   )
+}
