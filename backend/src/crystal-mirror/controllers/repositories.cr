@@ -42,9 +42,9 @@ end
 post "/repositories" do |env|
    env.response.content_type = "application/json"
    repository = Repository.new
-   repository.from_url = env.params.json["from_url"].as(String)
-   repository.to_url = env.params.json["to_url"].as(String)
-   repository.poll_interval = env.params.json["poll_interval"].as(String).to_i
+   repository.from_url = env.params.json["from_url"].to_s
+   repository.to_url = env.params.json["to_url"].to_s
+   repository.poll_interval = env.params.json["poll_interval"].to_s.to_i
    repository.user = env.current_user.not_nil!
    repository_cs = Repo.insert(repository)
    validate_changeset(repository_cs)
@@ -56,15 +56,15 @@ put "/repositories/:id" do |env|
    repository = Nil
    get_user_repo
    if env.params.json["from_url"]?
-      repository.from_url = env.params.json["from_url"].as(String)
+      repository.from_url = env.params.json["from_url"].to_s
    end
 
    if env.params.json["to_url"]?
-      repository.to_url = env.params.json["to_url"].as(String)
+      repository.to_url = env.params.json["to_url"].to_s
    end
 
    if env.params.json["poll_interval"]?
-      repository.poll_interval = env.params.json["poll_interval"].as(String).to_i
+      repository.poll_interval = env.params.json["poll_interval"].to_s.to_i
    end
 
    repository_cs = Repo.update(repository)
