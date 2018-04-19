@@ -30,11 +30,10 @@ end
 post "/users" do |env|
    env.response.content_type = "application/json"
    user = User.new
-   user.name = env.params.json["name"].as(String)
-   input_password = env.params.json["password"].as(String)
-   user.password = Crypto::Bcrypt::Password.create(input_password).to_s
+   filtered = filter_hash(env.params.json, ["name", "password"])
+   user.name = user.update_from_hash(filtered)
+   user.password = Crypto::Bcrypt::Password.create(filtered["password"]).to_s
    validate_model(user, User)
-   puts User.changeset(user).valid?
    user = Repo.insert(user)
    validate_changeset(user)
    user.instance.create_ssh_key(Kemal.config.env_config["ssh"]["keys_dir"])
@@ -72,7 +71,7 @@ post "/users/:id/ssh_key" do |env|
    keyfile_dir = Kemal.config.env_config["ssh"]["keys_dir"].as_s
 
    password = ""
-   password = env.params.json["password"].as(String) if env.params.json["password"]?
+   password = filter_hash(env.params.json, ["password"])["password"]
    user_password = Crypto::Bcrypt::Password.new(user.password.not_nil!)
 
    unless user_password == password
@@ -91,15 +90,11 @@ put "/users/:id" do |env|
    user = Nil
    get_user_resource
 
-   if env.params.json["name"]?
-      user.name = env.params.json["name"].as(String)
-   end
+   filtered = filter_hash(env.params.json, ["name", "password"])
 
-   if env.params.json["password"]?
-      user.password = Crypto::Bcrypt::Password.create(
-         env.params.json["password"].as(String), cost: 10
-      ).to_s
-   end
+   hashed = Crypto::Bcrypt::Password.create(filtered["password"], cost: 10).to_s
+   filtered["password"] = hashed
+   user.update_from_hash(filtered)
    user = Repo.update(user)
    validate_changeset(user)
    next user.instance.to_json

@@ -5,6 +5,8 @@ require "../utils/validator"
 require "../utils/response_macros"
 require "../tasks/sync"
 
+WRITABLE_FIELDS = ["from_url", "to_url", "poll_interval"]
+
 macro get_user_repo
    repository = Repo.get(Repository, env.params.url["id"].to_i)
    not_found(env) if repository.nil?
@@ -42,9 +44,8 @@ end
 post "/repositories" do |env|
    env.response.content_type = "application/json"
    repository = Repository.new
-   repository.from_url = env.params.json["from_url"].to_s
-   repository.to_url = env.params.json["to_url"].to_s
-   repository.poll_interval = env.params.json["poll_interval"].to_s.to_i
+   cleaned = filter_hash(env.params.json, WRITABLE_FIELDS)
+   repository.update_from_hash(cleaned)
    repository.user = env.current_user.not_nil!
    repository_cs = Repo.insert(repository)
    validate_changeset(repository_cs)
@@ -54,18 +55,9 @@ end
 put "/repositories/:id" do |env|
    env.response.content_type = "application/json"
    repository = Nil
+   cleaned = filter_hash(env.params.json, WRITABLE_FIELDS)
    get_user_repo
-   if env.params.json["from_url"]?
-      repository.from_url = env.params.json["from_url"].to_s
-   end
-
-   if env.params.json["to_url"]?
-      repository.to_url = env.params.json["to_url"].to_s
-   end
-
-   if env.params.json["poll_interval"]?
-      repository.poll_interval = env.params.json["poll_interval"].to_s.to_i
-   end
+   repository.update_from_hash(cleaned)
 
    repository_cs = Repo.update(repository)
    validate_changeset(repository_cs)

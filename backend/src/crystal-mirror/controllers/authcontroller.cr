@@ -4,6 +4,7 @@ require "crypto/bcrypt/password"
 require "../models/repo"
 require "../models/user"
 require "../models/token"
+require "../utils/validator"
 
 macro halt_401(env)
    env.response.content_type = "application/json"
@@ -25,15 +26,14 @@ post "/auth/login" do |env|
    unless env.params.json["name"]? && env.params.json["password"]?
       halt env, status_code: 400, response: {message: "Both name and password are required"}.to_json
    end
-   name = env.params.json["name"].as(String)
-   password = env.params.json["password"].as(String)
-   user = Repo.get_by(User, name: name)
+   cleaned = filter_hash(env.params.json, ["name", "password"])
+   user = Repo.get_by(User, name: cleaned["name"])
    if user.nil?
       halt_401 env
    end
    user = user.as(User) unless user.nil?
    user_password = Crypto::Bcrypt::Password.new(user.password.not_nil!)
-   halt_401 env unless user_password == password
+   halt_401 env unless user_password == cleaned["password"]
 
    env.response.content_type = "application/json"
    next user.create_token.to_json
