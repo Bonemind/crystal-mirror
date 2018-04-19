@@ -40,6 +40,10 @@ export default {
       };
    },
 
+   forceSync: ({ id }) => (state) => {
+      client.authedPost(`/repositories/${id}/sync`);
+   },
+
    removeRepository: (repo) => (state) => {
       const repositories = [...state.repositories.filter(e => e.id != repo.id)];
       return {
