@@ -18,7 +18,7 @@ const createRepoLine = (repo, actions) => {
          <td>
             <i
                onclick={() => location.actions.go(`/repositories/${repo.id}/results`)}
-               class={`pointer fa fa-thumbs-o-${repo.last_result.status == 0 ? 'up' : 'down'}`}/>
+               class={`pointer fa fa-thumbs-o-${(repo.last_result && repo.last_result.status) == 0 ? 'up' : 'down'}`}/>
 
          </td>
          <td>{repo.from_url}</td>
@@ -40,6 +40,7 @@ const createRepoEditLine = (repo, actions) => {
          <td>
             <input
                type="text"
+               class="form-control"
                value={repo.from_url}
                oninput={(e) => actions.setCopyValue({id: repo.id, field: 'from_url', value: e.target.value})}
             />
@@ -47,6 +48,7 @@ const createRepoEditLine = (repo, actions) => {
          <td>
             <input
                type="text"
+               class="form-control"
                value={repo.to_url}
                oninput={(e) => actions.setCopyValue({id: repo.id, field: 'to_url', value: e.target.value})}
             />
@@ -54,6 +56,7 @@ const createRepoEditLine = (repo, actions) => {
          <td>
             <input
                type="number"
+               class="form-control"
                value={repo.poll_interval}
                oninput={(e) => actions.setCopyValue({id: repo.id, field: 'poll_interval', value: e.target.value})}
             />

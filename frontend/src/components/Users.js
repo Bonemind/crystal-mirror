@@ -31,6 +31,7 @@ const createUserEditLine = (user, actions) => {
          <td>
             <input
                type="text"
+               class="form-control"
                value={user.name}
                oninput={(e) => actions.setCopyValue({id: user.id, field: 'name', value: e.target.value})}
             />
@@ -38,6 +39,7 @@ const createUserEditLine = (user, actions) => {
          <td>
             <input
                type="password"
+               class="form-control"
                value={user.password}
                placeholder="password"
                oninput={(e) => actions.setCopyValue({id: user.id, field: 'password', value: e.target.value})}
