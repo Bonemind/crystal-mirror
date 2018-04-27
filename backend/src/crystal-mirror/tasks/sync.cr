@@ -64,14 +64,7 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    commandresult.output = total_log
    commandresult.status = total_status
    commandresult.repository = repo
-   puts "assemblecr"
-   begin
-      res = Repo.insert(commandresult)
-      puts commandresult
-      puts res
-   rescue ex
-      puts ex
-   end
+   Repo.insert(commandresult)
 end
 
 def sync_all(ssh_key_path, git_root_dir)
@@ -85,13 +78,14 @@ def schedule_polls(ssh_key_path, git_root_dir)
    repositories = Repo.all(Repository).as(Array)
 
    repositories.each do |r|
+      last_result = r.last_result
       if r.poll_interval == 0
          # Polling disabled, skip
          next
-      elsif r.last_polled.nil?
+      elsif last_result.nil?
          # We want to poll and have never successfully polled, poll
          SyncRepoTask.dispatch(r, ssh_key_path, git_root_dir)
-      elsif (Time.now - r.last_polled.not_nil!).total_minutes > r.poll_interval.not_nil!
+      elsif (Time.now - last_result.created_at.not_nil!).total_minutes > r.poll_interval.not_nil!
          # Our last poll is older than our defined interval, poll
          SyncRepoTask.dispatch(r, ssh_key_path, git_root_dir)
       end

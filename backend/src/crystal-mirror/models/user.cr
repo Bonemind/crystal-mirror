@@ -2,6 +2,7 @@ require "crecto"
 require "./token"
 require "./repository"
 require "../utils/command_runner"
+require "../utils/jsonifier"
 
 class User < Crecto::Model
    schema "users" do
@@ -27,7 +28,7 @@ class User < Crecto::Model
       command_runner.run_command("ssh-keygen -f #{self.id} -P \"\"", "#{path}")
    end
 
-   JSON.mapping(id: Int32 | Int64 | Nil, name: String?)
+   jsonifier(include_names: ["id", "name"])
 
    validate_required [:name, :password]
    unique_constraint :name

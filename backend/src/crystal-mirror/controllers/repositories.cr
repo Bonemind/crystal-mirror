@@ -20,6 +20,15 @@ get "/repositories" do |env|
    repositories.as(Array).to_json
 end
 
+get "/repositories/:id/results/:page" do |env|
+   env.response.content_type = "application/json"
+   repository = Nil
+   get_user_repo
+   commandresults = repository.get_results(env.params.url["page"].to_i)
+   total = Repo.aggregate(Commandresult, :count, :id, Crecto::Repo::Query.where(repository_id: repository.id)).as(Int64)
+   next {"total" => total, "results" => commandresults}.to_json
+end
+
 get "/repositories/:id" do |env|
    env.response.content_type = "application/json"
    repository = Nil
