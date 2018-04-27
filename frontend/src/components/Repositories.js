@@ -1,5 +1,6 @@
 import { h } from 'hyperapp';
 import $ from 'jquery';
+import { location } from "@hyperapp/router"
 import ConfirmModal from './ConfirmModal';
 import client from '../client';
 
@@ -14,6 +15,12 @@ const createRepoLine = (repo, actions) => {
             confirmText="Delete"
             confirmCallback={() => actions.deleteRepo(repo)}
          />
+         <td>
+            <i
+               onclick={() => location.actions.go(`/repositories/${repo.id}/results`)}
+               class={`pointer fa fa-thumbs-o-${repo.last_result.status == 0 ? 'up' : 'down'}`}/>
+
+         </td>
          <td>{repo.from_url}</td>
          <td>{repo.to_url}</td>
          <td>{repo.poll_interval}</td>
@@ -29,6 +36,7 @@ const createRepoLine = (repo, actions) => {
 const createRepoEditLine = (repo, actions) => {
    return (
       <tr>
+         <td>&nbsp;</td>
          <td>
             <input
                type="text"
@@ -66,10 +74,11 @@ export default ({ repositories: state }, { repositories: actions }) => {
          <table class="table table-striped table-sm">
             <thead>
                <tr>
+                  <th>&nbsp;</th>
                   <th>From</th>
                   <th>To</th>
                   <th>Poll Interval</th>
-                  <th><i onclick={() => actions.addWorkingCopy()} class="pointer fa fa-plus"/></th>
+                  <th><i onclick={() => actions.addWorkingCopy()} class="pointer fa fa-plus"/>&nbsp;</th>
                </tr>
             </thead>
             <tbody>

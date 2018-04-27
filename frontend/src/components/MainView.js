@@ -3,6 +3,7 @@ import { Link, Route, location } from "@hyperapp/router"
 import Counter from './Counter';
 import Profile from './Profile';
 import Users from './Users';
+import CommandResults from './CommandResults';
 import Repositories from './Repositories';
 
 const MainView = ({state, actions}) => (
@@ -41,6 +42,7 @@ const MainView = ({state, actions}) => (
          <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <Route path="/" render={() => Counter(state, actions)} />
             <Route path="/repositories" render={() => Repositories(state, actions)} />
+            <Route path="/repositories/:id/results" parent render={({ match }) => CommandResults(match, state, actions)} />
             <Route path="/users" render={() => Users(state, actions)} />
             <Route path="/profile" render={() => Profile(state, actions)} />
          </main>

@@ -8,6 +8,17 @@ export default {
       actions.setRepositories(data);
    },
 
+   loadCommandResults: (id, page = 1) => async (state, actions) => {
+      const data = await client.authedGet(`/repositories/${id}/results/${page}`);
+      actions.setCommandResults({id, results: data});
+   },
+
+   setCommandResults: ({id, results}) => (state, actions) => {
+      const obj = state.repositories.find(e => e.id == id);
+      const payload = {...obj, commandresults: results};
+      return actions.updateRepository({id, payload});
+   },
+
    setCopyValue: ({id, field, value}) => (state) => {
       const obj = state.workingCopies.find(e => e.id == id);
       if (!obj) {

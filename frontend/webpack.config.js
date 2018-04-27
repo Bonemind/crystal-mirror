@@ -19,6 +19,7 @@ module.exports = (env) => {
          'babel-polyfill',
          './src/index.js',
       ],
+      mode: env,
       output: {
          filename: 'bundle.js',
          path: path.resolve(__dirname, './dist'),
@@ -55,10 +56,12 @@ module.exports = (env) => {
          add: (app, middleware, options) => {
             app.use(convert(proxy('/api', {
                target: 'http://localhost:3200',
+
                pathRewrite: {
                   '^/api': '/'
                }
             })));
+            app.use(convert(history()));
          }
       }
    };
