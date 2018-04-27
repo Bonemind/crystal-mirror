@@ -1,5 +1,6 @@
 require "crecto"
 require "./user"
+require "./commandresult"
 
 class Repository < Crecto::Model
    schema "repositories" do
@@ -8,6 +9,8 @@ class Repository < Crecto::Model
       field :last_polled, Time
       field :poll_interval, Int32, default: 60
       belongs_to :user, User
+      has_many :commandresults, Commandresult, dependent: :destroy
+
    end
 
    validate_required [:from_url, :to_url]

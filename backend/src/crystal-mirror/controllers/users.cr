@@ -31,7 +31,7 @@ post "/users" do |env|
    env.response.content_type = "application/json"
    user = User.new
    filtered = filter_hash(env.params.json, ["name", "password"])
-   user.name = user.update_from_hash(filtered)
+   user.name = filtered["name"]
    user.password = Crypto::Bcrypt::Password.create(filtered["password"]).to_s
    validate_model(user, User)
    user = Repo.insert(user)
@@ -92,8 +92,10 @@ put "/users/:id" do |env|
 
    filtered = filter_hash(env.params.json, ["name", "password"])
 
-   hashed = Crypto::Bcrypt::Password.create(filtered["password"], cost: 10).to_s
-   filtered["password"] = hashed
+   if filtered.has_key?("password") && !filtered["password"].empty?
+      hashed = Crypto::Bcrypt::Password.create(filtered["password"], cost: 10).to_s
+      filtered["password"] = hashed
+   end
    user.update_from_hash(filtered)
    user = Repo.update(user)
    validate_changeset(user)

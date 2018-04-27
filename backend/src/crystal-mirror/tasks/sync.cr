@@ -15,34 +15,62 @@ def sync_repo(id : Int64 | Int32 | Nil, ssh_key_path, git_dir)
 end
 
 def sync_repo(repo : Repository, ssh_key_path, git_dir)
-   puts repo.from_url
-   puts repo.to_url
-
-   ssh_command = "GIT_SSH_COMMAND='ssh -i #{ssh_key_path}/#{repo.user_id} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'"
-
-   target_dir = "#{git_dir}/#{repo.id}"
-   # Remove the directory if it exists
-   # Makes sure we start with a clean repo
-   if Dir.exists?(target_dir)
-      FileUtils.rm_r(target_dir)
-   end
-   Dir.mkdir_p(target_dir)
-
-   # Bare clone, see https://help.github.com/articles/duplicating-a-repository/
-   git_command = "git clone --bare #{repo.from_url} ./"
-   result = run_command("#{ssh_command} #{git_command}", target_dir)
-   if result[:status] != 0
-      puts result
+   ssh_keyfile_path = "#{ssh_key_path}/#{repo.user_id}"
+   unless File.exists?(ssh_keyfile_path)
+      puts "Missing ssh key: #{ssh_keyfile_path}"
       return
    end
 
-   # Push to new upstream
-   git_push_command = "git push --mirror #{repo.to_url}"
-   result = run_command("#{ssh_command} #{git_push_command}", target_dir)
+   ssh_command = "ssh -i #{ssh_keyfile_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
-   if result[:status] == 0
-      repo.last_polled = Time.now
-      Repo.update(repo)
+   target_dir = "#{git_dir}/#{repo.id}"
+
+   command_runner = CommandRunner.new({"GIT_SSH_COMMAND" => ssh_command})
+
+
+   # Create our new git dir if necessary
+   unless Dir.exists?(target_dir)
+      Dir.mkdir_p(target_dir)
+   end
+
+   commands = [] of String
+   # Clone and configure the remotes if needed
+   unless Dir.exists?("#{target_dir}/.git")
+      commands << "git clone #{repo.from_url} ./"
+      commands << "git remote add remote1 #{repo.from_url}"
+      commands << "git remote add remote2 #{repo.to_url}"
+      commands << "git remote rm origin"
+   else
+      commands = [] of String
+      commands << "git remote set-url remote1 #{repo.from_url}"
+      commands << "git remote set-url remote2 #{repo.to_url}"
+   end
+
+   commands << "git fetch -pP remote1"
+
+   # Push to new upstream
+   commands << "git push --all remote2"
+   results = command_runner.run_command_list(commands, target_dir)
+   total_log = ""
+
+   total_status = 0
+   results.each do |r|
+      total_log += "> #{r[:command]}\n"
+      total_log += "#{r[:output]}\n"
+      total_log += "#{r[:error]}\n"
+      total_status += r[:status]
+   end
+   commandresult = Commandresult.new
+   commandresult.output = total_log
+   commandresult.status = total_status
+   commandresult.repository = repo
+   puts "assemblecr"
+   begin
+      res = Repo.insert(commandresult)
+      puts commandresult
+      puts res
+   rescue ex
+      puts ex
    end
 end
 

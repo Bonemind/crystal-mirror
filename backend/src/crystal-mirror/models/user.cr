@@ -20,11 +20,14 @@ class User < Crecto::Model
    end
 
    def create_ssh_key(path)
+      command_runner = CommandRunner.new()
       key_file = "#{path}/#{self.id}"
       File.delete(key_file) if File.exists?(key_file)
       File.delete("#{key_file}.pub") if File.exists?("#{key_file}.pub")
-      run_command("ssh-keygen -f #{self.id} -P \"\"", "#{path}")
+      command_runner.run_command("ssh-keygen -f #{self.id} -P \"\"", "#{path}")
    end
+
+   JSON.mapping(id: Int32 | Int64 | Nil, name: String?)
 
    validate_required [:name, :password]
    unique_constraint :name
