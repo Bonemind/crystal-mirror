@@ -4,9 +4,8 @@
   "description": "Minimal web app",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack --env production",
-    "test": "jest --coverage --no-cache"
+    "start": "webpack-serve --config=./webpack.config.js",
+    "build": "webpack --env production"
   },
   "author": "Regis Boudinot (selfup)",
   "license": "MIT",
@@ -17,20 +16,20 @@
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.1.0",
     "font-awesome": "^4.7.0",
-    "font-awesome-webpack": "^0.0.5-beta.2",
     "hyperapp": "^1.2.5",
     "jquery": "^3.3.1",
     "node-sass": "^4.8.3",
     "popper.js": "^1.14.3",
     "postcss-loader": "^2.1.4",
     "sass-loader": "^7.0.1",
-    "style-loader": "^0.20.3"
+    "style-loader": "^0.21.0",
+    "webpack-serve": "^0.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-core": "^6.22.1",
     "babel-loader": "^7.1.2",
-    "babel-minify-webpack-plugin": "^0.2.0",
+    "babel-minify-webpack-plugin": "^0.3.1",
     "babel-plugin-transform-react-jsx": "^6.22.0",
     "babel-preset-env": "^1.6.1",
     "css-loader": "^0.28.11",
@@ -41,14 +40,16 @@
     "eslint-plugin-react": "^7.5.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.11",
+    "font-awesome-webpack": "https://github.com/jarecsni/font-awesome-webpack#440af2a2efe7ba1779d039556f04538e57bad4bb",
     "imports": "^1.0.0",
     "jest": "^22.1.4",
+    "koa-connect": "^2.0.1",
     "less": "^3.0.1",
     "less-loader": "^4.1.0",
     "node-libs-browser": "^2.0.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^1.0.1",
-    "webpack": "^3.4.0",
-    "webpack-dev-server": "^2.4.2"
+    "webpack": "^4.6.0",
+    "webpack-dev-server": "^3.1.3"
   }
 }

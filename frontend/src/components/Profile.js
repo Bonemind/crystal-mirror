@@ -2,7 +2,7 @@ import { h } from 'hyperapp';
 import $ from 'jquery';
 import ConfirmModal from './ConfirmModal';
 
-export default ({ user: state }, { user: actions }) => {
+export default ({ profile: state }, { profile: actions }) => {
    const confirmRegenBody = (
       <p>
          Type in your password to confirm key regeneration.

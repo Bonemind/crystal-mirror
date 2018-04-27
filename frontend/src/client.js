@@ -1,6 +1,6 @@
 const METHODS = ["GET", "POST", "PUT", "DELETE"];
 
-const BASE_URL = 'http://localhost:3200'
+const BASE_URL = '/api'
 
 // Localstorage key
 const AUTH_KEY = 'auth';

@@ -1,21 +1,12 @@
+'use strict';
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 
-const plugins = [
-   new ExtractTextPlugin({
-      filename: './bundle.css',
-      allChunks: true,
-   }),
-   new webpack.optimize.ModuleConcatenationPlugin(),
-];
-
-const extractSass = new ExtractTextPlugin({
-   filename: "./[name].[contenthash].css",
-});
-
+const convert = require('koa-connect');
+const history = require('connect-history-api-fallback');
+const proxy = require('http-proxy-middleware');
 
 module.exports = (env) => {
    if (env === 'production') {
@@ -46,11 +37,6 @@ module.exports = (env) => {
             test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
             loader: "file-loader"
          }, {
-            test: /\.css$/,
-            use: ExtractTextPlugin.extract({
-               use: 'css-loader?importLoaders=1',
-            }),
-         }, {
             test: /\.scss$/,
             use: [{
                loader: "style-loader"
@@ -62,12 +48,18 @@ module.exports = (env) => {
             ],
          }]
       },
-      plugins,
-      devServer: {
-         publicPath: '/',
-         contentBase: './dist',
-         open: false,
-         historyApiFallback: true
-      },
+      serve: {
+         mode: 'development',
+         content: [__dirname] + '/dist',
+         host: '192.168.1.7',
+         add: (app, middleware, options) => {
+            app.use(convert(proxy('/api', {
+               target: 'http://localhost:3200',
+               pathRewrite: {
+                  '^/api': '/'
+               }
+            })));
+         }
+      }
    };
 };
