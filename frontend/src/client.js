@@ -79,7 +79,7 @@ class ApiClient {
          if (resp.ok) {
             return resp.json();
          }
-         const error = {status: resp.status, body: resp.body};
+         const error = {status: resp.status, body: resp.json()};
          //this.store.dispatch({ type: REQUEST_FAILURE, payload: error })
          return Promise.reject(error);
       }).catch(e => {

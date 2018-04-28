@@ -1,4 +1,5 @@
 import client from '../client';
+import iziToast from 'izitoast';
 
 export default {
    load: () => async (state, actions) => {
@@ -31,12 +32,31 @@ export default {
    },
 
    regenSshKey: () => async (state, actions) => {
-      const newKey = await client.authedPost(
-         `/users/${state.userId}/ssh_key`,
-         {password: state.passwordConfirm}
-      );
+      let newKey = {};
+      try {
+         newKey = await client.authedPost(
+            `/users/${state.userId}/ssh_key`,
+            {password: state.passwordConfirm}
+         );
+      } catch (e) {
+         const body = await e.body;
+         const message = body.message ? body.message : 'Failed to generate key';
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message,
+            position: 'topRight'
+         });
+         return;
+      }
       actions.updatePasswordConfirm('');
       actions.updateSshKey(newKey);
+      iziToast.show({
+         title: 'Success',
+         color: 'green',
+         message: 'SSH key generated',
+         position: 'topRight'
+      });
    },
 
    updateUserData: ({name, id}) => (state, actions) => {

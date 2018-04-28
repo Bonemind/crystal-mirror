@@ -1,4 +1,5 @@
 import client from '../client';
+import iziToast from 'izitoast';
 
 export default {
    setUsers: (data) => (state) => ({...state, ...{users: data}}),
@@ -20,12 +21,28 @@ export default {
    saveWorkingCopy: (id) => async (state, actions) => {
       const obj = state.workingCopies.find(e => e.id == id);
       let result = {};
-      if (!obj.id || (obj.id + '').startsWith('new')) {
-         const { id: _ignored, ...payload } = obj;
-         result = await client.authedPost(`/users`, payload);
-      } else {
-         result = await client.authedPut(`/users/${obj.id}`, obj);
+      try {
+         if (!obj.id || (obj.id + '').startsWith('new')) {
+            const { id: _ignored, ...payload } = obj;
+            result = await client.authedPost(`/users`, payload);
+         } else {
+            result = await client.authedPut(`/users/${obj.id}`, obj);
+         }
+      } catch (e) {
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message: "Couldn't save user",
+            position: 'topRight'
+         });
+         return;
       }
+      iziToast.show({
+         title: 'Saved',
+         color: 'green',
+         message: 'Saved user',
+         position: 'topRight'
+      });
       actions.removeWorkingCopy(id);
       actions.updateUser({id: id, payload: result});
    },
@@ -40,10 +57,6 @@ export default {
       };
    },
 
-   forceSync: ({ id }) => (state) => {
-      client.authedPost(`/users/${id}/sync`);
-   },
-
    removeUser: (user) => (state) => {
       const users = [...state.users.filter(e => e.id != user.id)];
       return {
@@ -55,7 +68,23 @@ export default {
    },
 
    deleteUser: (user) => async (state, actions) => {
-      await client.authedDelete(`/users/${user.id}`);
+      try {
+         await client.authedDelete(`/users/${user.id}`);
+      } catch(e) {
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message: "Couldn't delete User",
+            position: 'topRight'
+         });
+         return
+      }
+      iziToast.show({
+         title: 'Success',
+         color: 'green',
+         message: 'User deleted',
+         position: 'topRight'
+      });
       actions.removeUser(user);
    },
 

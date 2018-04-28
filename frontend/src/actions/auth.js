@@ -1,4 +1,5 @@
 import client from '../client';
+import iziToast from 'izitoast';
 
 export default {
    loginForm: {
@@ -31,12 +32,29 @@ export default {
    login: () => async (state, actions) => {
       client.setToken(null);
       const payload = { name: state.loginForm.username, password: state.loginForm.password };
-      const data = await client.unauthedPost('/auth/login', payload);
+      let data = {};
+      try {
+         data = await client.unauthedPost('/auth/login', payload);
+      } catch (e) {
+         iziToast.show({
+            title: 'Failed',
+            color: 'red',
+            message: 'Invalid username or password',
+            position: 'topRight'
+         });
+         return;
+      }
       const authData = {
          username: payload.name,
          userId: data.user_id,
          token: data.uuid
       }
+      iziToast.show({
+         title: 'Success',
+         color: 'green',
+         message: 'Welcome back',
+         position: 'topRight'
+      });
       actions.loginForm.setUsername();
       actions.loginForm.setPassword();
       actions.setAuthData(authData);

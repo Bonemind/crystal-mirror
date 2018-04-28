@@ -3,7 +3,6 @@ import client from '../client';
 export default {
    loadCommandResults: ({id, page = 1}) => async (state, actions) => {
       const data = await client.authedGet(`/repositories/${id}/results/${page}`);
-      console.log(page);
       actions.setCommandResults({id, results: data, page});
    },
 

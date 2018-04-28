@@ -1,4 +1,5 @@
 import client from '../client';
+import iziToast from 'izitoast';
 
 export default {
    setRepositories: (data) => (state) => ({...state, ...{repositories: data}}),
@@ -9,8 +10,17 @@ export default {
    },
 
    loadCommandResults: (id, page = 1) => async (state, actions) => {
-      const data = await client.authedGet(`/repositories/${id}/results/${page}`);
-      actions.setCommandResults({id, results: data});
+      try {
+         const data = await client.authedGet(`/repositories/${id}/results/${page}`);
+         actions.setCommandResults({id, results: data});
+      } catch (e) {
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message: 'Failed to load results',
+            position: 'topRight'
+         });
+      }
    },
 
    setCommandResults: ({id, results}) => (state, actions) => {
@@ -31,14 +41,30 @@ export default {
    saveWorkingCopy: (id) => async (state, actions) => {
       const obj = state.workingCopies.find(e => e.id == id);
       let result = {};
-      if (!obj.id || (obj.id + '').startsWith('new')) {
-         const { id: _ignored, ...payload } = obj;
-         result = await client.authedPost(`/repositories`, payload);
-      } else {
-         result = await client.authedPut(`/repositories/${obj.id}`, obj);
+      try {
+         if (!obj.id || (obj.id + '').startsWith('new')) {
+            const { id: _ignored, ...payload } = obj;
+            result = await client.authedPost(`/repositories`, payload);
+         } else {
+            result = await client.authedPut(`/repositories/${obj.id}`, obj);
+         }
+      } catch (e) {
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message: "Couldn't save repository",
+            position: 'topRight'
+         });
+         return;
       }
       actions.removeWorkingCopy(id);
       actions.updateRepository({id: id, payload: result});
+      iziToast.show({
+         title: 'Saved',
+         color: 'green',
+         message: 'Saved repository',
+         position: 'topRight'
+      });
    },
 
    updateRepository: ({id, payload}) => (state) => {
@@ -51,8 +77,25 @@ export default {
       };
    },
 
-   forceSync: ({ id }) => (state) => {
-      client.authedPost(`/repositories/${id}/sync`);
+   forceSync: ({ id }) => async (state) => {
+      try {
+         await client.authedPost(`/repositories/${id}/sync`);
+      } catch(e) {
+         iziToast.show({
+            title: 'Failure',
+            color: 'green',
+            message: "Couldn't force sync",
+            position: 'topRight'
+         });
+         return
+      }
+      iziToast.show({
+         title: 'Success',
+         color: 'green',
+         message: 'Forcing sync',
+         position: 'topRight'
+      });
+
    },
 
    removeRepository: (repo) => (state) => {
@@ -66,7 +109,23 @@ export default {
    },
 
    deleteRepo: (repo) => async (state, actions) => {
-      await client.authedDelete(`/repositories/${repo.id}`);
+      try {
+         await client.authedDelete(`/repositories/${repo.id}`);
+      } catch(e) {
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message: "Couldn't delete repository",
+            position: 'topRight'
+         });
+         return
+      }
+      iziToast.show({
+         title: 'Success',
+         color: 'green',
+         message: 'Repository deleted',
+         position: 'topRight'
+      });
       actions.removeRepository(repo);
    },
 
@@ -88,7 +147,7 @@ export default {
             id: 'new' + (newcopies.length + 1),
             from_url: '',
             to_url: '',
-            interval: 0
+            poll_interval: 0
          }
       }
       const workingCopies = [...state.workingCopies.filter(e => e.id != obj.id), obj];
