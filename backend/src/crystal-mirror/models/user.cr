@@ -8,6 +8,7 @@ class User < Crecto::Model
    schema "users" do
       field :name, String
       field :password, String
+      field :is_admin, Bool, default: false
       has_many :tokens, Token, dependent: :destroy
       has_many :repositories, Repository, dependent: :destroy
    end
@@ -28,7 +29,7 @@ class User < Crecto::Model
       command_runner.run_command("ssh-keygen -f #{self.id} -P \"\"", "#{path}")
    end
 
-   jsonifier(include_names: ["id", "name"])
+   jsonifier(include_names: ["id", "name", "is_admin"])
 
    validate_required [:name, :password]
    unique_constraint :name

@@ -27,7 +27,14 @@ class Repository < Crecto::Model
          .limit(RESULT_PAGE_COUNT)
          .offset(RESULT_PAGE_COUNT * (page - 1))
       results = Repo.all(Commandresult, query)
-      return results.as(Array)
+      total = Repo.aggregate(Commandresult, :count, :id,
+                             Crecto::Repo::Query.where(repository_id: self.id)).as(Int64)
+      return {
+         "page" => page,
+         "page_results" => RESULT_PAGE_COUNT,
+         "total" => total,
+         "results" => results.as(Array)
+      }
    end
 
    jsonifier(exclude_names: ["commandresults", "initial_values", "user"], include_methods: ["last_result"])

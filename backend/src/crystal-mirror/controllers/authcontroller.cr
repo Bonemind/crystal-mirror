@@ -36,7 +36,10 @@ post "/auth/login" do |env|
    halt_401 env unless user_password == cleaned["password"]
 
    env.response.content_type = "application/json"
-   next user.create_token.to_json
+   token = user.create_token
+   token_user = Repo.get_association(token, :user).as(User)
+   token.user = token_user
+   next token.to_json
 end
 
 get "/auth/me" do |env|

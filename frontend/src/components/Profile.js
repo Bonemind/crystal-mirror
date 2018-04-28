@@ -45,6 +45,38 @@ export default ({ profile: state }, { profile: actions }) => {
                </div>
             </div>
          </div>
+         <div class="row">
+            <div class="card" style={{ minWidth: '100%' }}>
+               <h5 class="card-header">
+                  Change password
+               </h5>
+               <div class="card-body">
+                  <div class="form-group">
+                     <label for="currentPass">Current password</label>
+                     <input
+                        type="password"
+                        id="currentPass"
+                        class="form-control"
+                        value={state.passwordChangeForm.currentPassword}
+                        placeholder="Current password"
+                        oninput={(e) => actions.updatePasswordChangeForm({field: 'currentPassword', value: e.target.value})}
+                     />
+                  </div>
+                  <div class="form-group">
+                     <label for="newPass">New password</label>
+                     <input
+                        type="password"
+                        id="newPassword"
+                        class="form-control"
+                        value={state.passwordChangeForm.newPassword}
+                        placeholder="New password"
+                        oninput={(e) => actions.updatePasswordChangeForm({field: 'newPassword', value: e.target.value})}
+                     />
+                  </div>
+                  <button onclick={() => actions.updatePassword()} class="btn btn-primary" type="button">Save</button>
+               </div>
+            </div>
+         </div>
       </div>
    )
 }

@@ -75,6 +75,7 @@ Sam.namespace "user" do
       user = User.new
       user.name = username
       user.password = Crypto::Bcrypt::Password.create(password).to_s
+      user.is_admin = true
       user = Repo.insert(user).instance
       user.create_ssh_key(config["ssh"]["keys_dir"])
       puts "Created user, assigned id: #{user.id}"

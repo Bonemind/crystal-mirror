@@ -22,6 +22,21 @@ export default {
       };
    },
 
+   updatePasswordChangeForm: ({field, value}) => (state) => {
+      const newVal = {};
+      newVal[field] = value;
+
+      return {
+         ...state,
+         ...{
+            passwordChangeForm: {
+               ...state.passwordChangeForm,
+               ...newVal
+            }
+         }
+      };
+   },
+
    updatePasswordConfirm: (newValue) => (state) => {
       return {
          ...state,
@@ -29,6 +44,35 @@ export default {
             passwordConfirm: newValue
          }
       }
+   },
+
+   updatePassword: () =>  async (state, actions) => {
+      const payload = {
+         password_confirm: state.passwordChangeForm.currentPassword,
+         password: state.passwordChangeForm.newPassword
+      }
+      try {
+         const resp = await client.authedPut(`/users/${state.userId}/`, payload);
+      } catch(e) {
+         const body = await e.body;
+         const message = body.message ? body.message : 'Failed to generate key';
+         iziToast.show({
+            title: 'Failure',
+            color: 'red',
+            message,
+            position: 'bottomRight'
+         });
+         return;
+      }
+      actions.updatePasswordChangeForm({field: 'currentPassword', value: ''});
+      actions.updatePasswordChangeForm({field: 'newPassword', value: ''});
+      iziToast.show({
+         title: 'Success',
+         color: 'green',
+         message: 'Password updated',
+         position: 'bottomRight'
+      });
+
    },
 
    regenSshKey: () => async (state, actions) => {
@@ -45,7 +89,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message,
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return;
       }
@@ -55,7 +99,7 @@ export default {
          title: 'Success',
          color: 'green',
          message: 'SSH key generated',
-         position: 'topRight'
+         position: 'bottomRight'
       });
    },
 

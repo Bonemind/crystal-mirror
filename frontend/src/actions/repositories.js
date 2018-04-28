@@ -18,7 +18,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message: 'Failed to load results',
-            position: 'topRight'
+            position: 'bottomRight'
          });
       }
    },
@@ -53,7 +53,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message: "Couldn't save repository",
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return;
       }
@@ -63,7 +63,7 @@ export default {
          title: 'Saved',
          color: 'green',
          message: 'Saved repository',
-         position: 'topRight'
+         position: 'bottomRight'
       });
    },
 
@@ -85,7 +85,7 @@ export default {
             title: 'Failure',
             color: 'green',
             message: "Couldn't force sync",
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return
       }
@@ -93,7 +93,7 @@ export default {
          title: 'Success',
          color: 'green',
          message: 'Forcing sync',
-         position: 'topRight'
+         position: 'bottomRight'
       });
 
    },
@@ -116,7 +116,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message: "Couldn't delete repository",
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return
       }
@@ -124,7 +124,7 @@ export default {
          title: 'Success',
          color: 'green',
          message: 'Repository deleted',
-         position: 'topRight'
+         position: 'bottomRight'
       });
       actions.removeRepository(repo);
    },

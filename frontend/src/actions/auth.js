@@ -6,14 +6,15 @@ export default {
       setUsername: (username) => (form) => ({...form, ...{username}}),
       setPassword: (password) => (form) => ({...form, ...{password}}),
    },
-   setAuthData: ({username, userId, token}) => (auth) => {
+   setAuthData: ({username, userId, token, isAdmin}) => (auth) => {
       client.setToken(token);
       return {
          ...auth,
          ...{
             token,
             username,
-            userId
+            userId,
+            isAdmin
          },
       }
    },
@@ -25,7 +26,8 @@ export default {
          ...{
             token: null,
             username: null,
-            userId: null
+            userId: null,
+            isAdmin: false
          }
       }
    },
@@ -40,20 +42,21 @@ export default {
             title: 'Failed',
             color: 'red',
             message: 'Invalid username or password',
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return;
       }
       const authData = {
-         username: payload.name,
-         userId: data.user_id,
-         token: data.uuid
+         username: data.user.name,
+         userId: data.user.id,
+         token: data.uuid,
+         isAdmin: data.user.is_admin
       }
       iziToast.show({
          title: 'Success',
          color: 'green',
          message: 'Welcome back',
-         position: 'topRight'
+         position: 'bottomRight'
       });
       actions.loginForm.setUsername();
       actions.loginForm.setPassword();

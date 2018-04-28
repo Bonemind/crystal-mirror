@@ -25,23 +25,21 @@ const MainView = ({state, actions}) => (
             <div class="sidebar-sticky">
                <ul class="nav flex-column">
                   <li class="nav-item">
-                     <Link class="nav-link" to="/">Home</Link>
-                  </li>
-                  <li class="nav-item">
-                     <Link class="nav-link" to="/repositories">Repositories</Link>
+                     <Link class="nav-link" to="/">Repositories</Link>
                   </li>
                   <li class="nav-item">
                      <Link class="nav-link" to="/profile">Profile</Link>
                   </li>
-                  <li class="nav-item">
-                     <Link class="nav-link" to="/users">Users</Link>
-                  </li>
+                  { state.auth.isAdmin && (
+                     <li class="nav-item">
+                        <Link class="nav-link" to="/users">Users</Link>
+                     </li>
+                  )}
                </ul>
             </div>
          </nav>
          <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <Route path="/" render={() => Counter(state, actions)} />
-            <Route path="/repositories" render={() => Repositories(state, actions)} />
+            <Route path="/" render={() => Repositories(state, actions)} />
             <Route path="/repositories/:id/results" parent render={({ match }) => CommandResults(match, state, actions)} />
             <Route path="/users" render={() => Users(state, actions)} />
             <Route path="/profile" render={() => Profile(state, actions)} />

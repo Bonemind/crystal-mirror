@@ -27,7 +27,7 @@ const createRepoLine = (repo, actions) => {
          <td>
             <i class="pointer fa fa-edit" onclick={() => actions.addWorkingCopy(repo)} />
             <i class="pointer fa fa-refresh" onclick={() => actions.forceSync(repo)} />
-            <i class="pointer fa fa-times" onclick={() => $('#deleteModal' + repo.id).modal()} />
+            <i class="pointer fa fa-trash" onclick={() => $('#deleteModal' + repo.id).modal()} />
          </td>
       </tr>
    );

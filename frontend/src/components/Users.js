@@ -3,7 +3,7 @@ import $ from 'jquery';
 import ConfirmModal from './ConfirmModal';
 import client from '../client';
 
-const createUserLine = (user, actions, userId) => {
+const createUserLine = (user, actions, currentUser) => {
    return (
       <tr>
          <ConfirmModal
@@ -16,10 +16,11 @@ const createUserLine = (user, actions, userId) => {
          />
          <td>{user.name}</td>
          <td>&nbsp;</td>
-         { user.id == userId ?
+         <td><i class={`fa fa-${user.is_admin ? 'check' : 'times'}`} /></td>
+         { currentUser.isAdmin ?
             (<td>
                <i class="pointer fa fa-edit" onclick={() => actions.addWorkingCopy(user)} />
-               <i class="pointer fa fa-times" onclick={() => $('#deleteModal' + user.id).modal()} />
+               <i class="pointer fa fa-trash" onclick={() => $('#deleteModal' + user.id).modal()} />
             </td>) : <td>&nbsp;</td>}
       </tr>
    );
@@ -46,6 +47,17 @@ const createUserEditLine = (user, actions) => {
             />
          </td>
          <td>
+            <div class="form-check form-check-inline">
+               <input
+                  id="adminCheckbox"
+                  type="checkbox"
+                  class="form-check-input"
+                  checked={user.is_admin}
+                  onchange={(e) => actions.setCopyValue({id: user.id, field: 'is_admin', value: e.target.checked})}
+               />
+            </div>
+         </td>
+         <td>
             <i class="pointer fa fa-check" onclick={() => actions.saveWorkingCopy(user.id)} />
             <i class="pointer fa fa-times" onclick={() => actions.removeWorkingCopy(user.id)} />
          </td>
@@ -63,13 +75,14 @@ export default ({ users: state, auth: currentUser }, { users: actions }) => {
                <tr>
                   <th>Username</th>
                   <th>&nbsp;</th>
-                  <th><i onclick={() => actions.addWorkingCopy()} class="pointer fa fa-plus"/></th>
+                  <th>Admin</th>
+                  <th>{currentUser.isAdmin ? (<i onclick={() => actions.addWorkingCopy()} class="pointer fa fa-plus"/>) : ' '}</th>
                </tr>
             </thead>
             <tbody>
                { state.users.map(r => {
                   const workingCopy = state.workingCopies.filter(e => e.id == r.id);
-                  return workingCopy.length > 0 ? createUserEditLine(workingCopy[0], actions) : createUserLine(r, actions, currentUser.userId);
+                  return workingCopy.length > 0 ? createUserEditLine(workingCopy[0], actions) : createUserLine(r, actions, currentUser);
                }
                )}
                { state.workingCopies.filter(r => (r.id + '').startsWith('new')).map(r => createUserEditLine(r, actions)) }

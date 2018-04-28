@@ -33,7 +33,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message: "Couldn't save user",
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return;
       }
@@ -41,7 +41,7 @@ export default {
          title: 'Saved',
          color: 'green',
          message: 'Saved user',
-         position: 'topRight'
+         position: 'bottomRight'
       });
       actions.removeWorkingCopy(id);
       actions.updateUser({id: id, payload: result});
@@ -75,7 +75,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message: "Couldn't delete User",
-            position: 'topRight'
+            position: 'bottomRight'
          });
          return
       }
@@ -83,7 +83,7 @@ export default {
          title: 'Success',
          color: 'green',
          message: 'User deleted',
-         position: 'topRight'
+         position: 'bottomRight'
       });
       actions.removeUser(user);
    },
@@ -105,7 +105,8 @@ export default {
          obj = {
             id: 'new' + (newcopies.length + 1),
             name: '',
-            password: ''
+            password: '',
+            is_admin: false
          }
       }
       const workingCopies = [...state.workingCopies.filter(e => e.id != obj.id), obj];
