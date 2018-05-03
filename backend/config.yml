@@ -30,6 +30,20 @@ development:
   dispatch:
     <<: *dispatch
 
+production:
+  web:
+    <<: *web
+  db:
+    <<: *db
+    host: db
+    database: crystal
+  ssh:
+    <<: *ssh
+  git:
+    <<: *git
+  dispatch:
+    <<: *dispatch
+
 test:
   web:
     <<: *web

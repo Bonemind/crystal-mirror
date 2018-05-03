@@ -11,7 +11,6 @@ const proxy = require('http-proxy-middleware');
 const internalIp = require('internal-ip');
 
 const plugins = [
-   new BundleAnalyzerPlugin(),
    new webpack.ProvidePlugin({
       Util: 'exports-loader?Util!bootstrap/js/dist/util',
       $: 'jquery-slim',
@@ -25,6 +24,8 @@ module.exports = (env) => {
    if (isProductionMode) {
       plugins.push(new UglifyJsPlugin());
       plugins.push(new MinifyPlugin());
+   } else {
+      plugins.push(new BundleAnalyzerPlugin());
    }
 
    const base = {
