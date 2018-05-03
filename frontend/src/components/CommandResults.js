@@ -1,9 +1,9 @@
 import { h } from 'hyperapp';
-import $ from 'jquery';
+import $ from 'jquery-slim';
 import ConfirmModal from './ConfirmModal';
 import client from '../client';
 import { Link } from "@hyperapp/router"
-import _ from 'lodash';
+import range from 'lodash-es/range';
 
 const PAGE_ENTRIES = 20;
 
@@ -36,7 +36,7 @@ export default (match, { commandresults: state }, { commandresults: actions }) =
                      class="page-link" href="#"
                   >Previous</a>
                </li>
-               { _.range(1, pageCount + 1).map(p => (
+               { range(1, pageCount + 1).map(p => (
                   <li class={`page-item ${p == currentPage ? 'active' : ''}`}>
                      <a
                         onclick={() => actions.loadCommandResults({id: match.params.id, page: p})}

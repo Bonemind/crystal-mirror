@@ -1,5 +1,5 @@
 import { h } from 'hyperapp';
-import $ from 'jquery';
+import $ from 'jquery-slim';
 import ConfirmModal from './ConfirmModal';
 import client from '../client';
 

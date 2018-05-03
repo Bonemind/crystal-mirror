@@ -1,8 +1,9 @@
 import { h } from 'hyperapp';
-import $ from 'jquery';
+import $ from 'jquery-slim';
 import { location } from "@hyperapp/router"
 import ConfirmModal from './ConfirmModal';
 import client from '../client';
+import 'bootstrap/js/dist/modal';
 
 const createRepoLine = (repo, actions) => {
    return (

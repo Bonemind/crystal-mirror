@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-serve --config=./webpack.config.js",
-    "build": "webpack --env production"
+    "build": "webpack-cli --env production"
   },
   "author": "Regis Boudinot (selfup)",
   "license": "MIT",
@@ -18,7 +18,8 @@
     "font-awesome": "^4.7.0",
     "hyperapp": "^1.2.5",
     "izitoast": "^1.3.0",
-    "jquery": "^3.3.1",
+    "jquery-slim": "^3.0.0",
+    "lodash-es": "^4.17.10",
     "node-sass": "^4.8.3",
     "popper.js": "^1.14.3",
     "postcss-loader": "^2.1.4",
@@ -39,18 +40,23 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jest": "^21.7.0",
     "eslint-plugin-react": "^7.5.1",
+    "exports-loader": "^0.7.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.11",
     "font-awesome-webpack": "https://github.com/jarecsni/font-awesome-webpack#440af2a2efe7ba1779d039556f04538e57bad4bb",
     "imports": "^1.0.0",
+    "internal-ip": "^3.0.1",
     "jest": "^22.1.4",
     "koa-connect": "^2.0.1",
     "less": "^3.0.1",
     "less-loader": "^4.1.0",
+    "mini-css-extract-plugin": "^0.4.0",
     "node-libs-browser": "^2.0.0",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^1.0.1",
     "webpack": "^4.6.0",
+    "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-cli": "^2.1.2",
     "webpack-dev-server": "^3.1.3"
   }
 }

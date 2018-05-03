@@ -1,4 +1,5 @@
 'use strict';
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require('path');
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -7,19 +8,38 @@ const webpack = require('webpack');
 const convert = require('koa-connect');
 const history = require('connect-history-api-fallback');
 const proxy = require('http-proxy-middleware');
+const internalIp = require('internal-ip');
+
+const plugins = [
+   new BundleAnalyzerPlugin(),
+   new webpack.ProvidePlugin({
+      Util: 'exports-loader?Util!bootstrap/js/dist/util',
+      $: 'jquery-slim',
+      jquery: 'jquery-slim'
+   })
+];
+
 
 module.exports = (env) => {
-   if (env === 'production') {
+   const isProductionMode = env === 'production';
+   if (isProductionMode) {
       plugins.push(new UglifyJsPlugin());
       plugins.push(new MinifyPlugin());
    }
 
-   return {
+   const base = {
       entry: [
          'babel-polyfill',
+         'font-awesome-webpack!./font-awesome.config.js',
          './src/index.js',
       ],
       mode: env,
+      resolve: {
+         alias: {
+            $: "jquery/dist/jquery.slim.min.js",
+            jquery: "jquery/dist/jquery.slim.min.js"
+         }
+      },
       output: {
          filename: 'bundle.js',
          path: path.resolve(__dirname, './dist'),
@@ -49,10 +69,13 @@ module.exports = (env) => {
             ],
          }]
       },
-      serve: {
+      plugins,
+   };
+   if (env !== 'production') {
+      const serve = {
          mode: 'development',
          content: [__dirname] + '/dist',
-         host: '192.168.1.7',
+         host: internalIp.v4.sync(),
          add: (app, middleware, options) => {
             app.use(convert(proxy('/api', {
                target: 'http://localhost:3200',
@@ -64,5 +87,7 @@ module.exports = (env) => {
             app.use(convert(history()));
          }
       }
-   };
+      base['serve'] = serve;
+   }
+   return base;
 };

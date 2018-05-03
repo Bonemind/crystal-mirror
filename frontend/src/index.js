@@ -5,9 +5,7 @@ import state from './state';
 import client from './client';
 import MainView from './components/MainView';
 import LoginView from './components/LoginView';
-import 'font-awesome-webpack';
 import './main.scss';
-import "bootstrap";
 
 const view = (state, actions) => {
    if (state.auth.username) {

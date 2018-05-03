@@ -1,4 +1,4 @@
-@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/scss/bootstrap.scss";
 @import "~izitoast/dist/css/iziToast.min.css";
 
 .white {
@@ -7,4 +7,5 @@
 
 .pointer {
 	cursor: pointer;
+	display: hidden;
 }
