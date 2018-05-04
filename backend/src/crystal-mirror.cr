@@ -18,7 +18,8 @@ token_auth
 cors_middleware
 
 puts "Current env: #{get_env}"
-env_config = get_env_config(Kemal.config.env)
+current_env = get_env
+env_config = get_env_config(current_env)
 Kemal.config.env_config = env_config
 
 configure_dispatch

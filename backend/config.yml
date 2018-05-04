@@ -10,6 +10,7 @@ defaults :
     port: 5433
     migration_files_path: ./src/migrations
   ssh: &ssh
+    test: 'a'
     keys_dir: /tmp/mirror_keys
   git: &git
     repo_dir: /tmp/git_mirrors
@@ -36,11 +37,15 @@ production:
   db:
     <<: *db
     host: db
+    port: 5432
+    migration_files_path: ./migrations
     database: crystal
   ssh:
     <<: *ssh
+    keys_dir: '/srv/crmirror/mirror_keys'
   git:
     <<: *git
+    repo_dir: '/srv/crmirror/git_repos'
   dispatch:
     <<: *dispatch
 
