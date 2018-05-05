@@ -4,7 +4,7 @@ export default {
    passwordConfirm: '',
    passwordChangeForm: {
       currentPassword: '',
-      newPassword: ''
+      newPassword: '',
    },
-   sshKey: ''
-}
+   sshKey: '',
+};

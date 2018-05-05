@@ -4,12 +4,12 @@ const ConfirmModal = ({
    id,
    title = 'Confirm',
    text = 'Are you sure',
-   confirmClass = "btn btn-primary",
-   confirmText = "Save changes",
+   confirmClass = 'btn btn-primary',
+   confirmText = 'Save changes',
    confirmCallback = () => {},
-   closeClass = "btn btn-secondary",
-   closeText = "Close",
-   closeCallback = () => {}
+   closeClass = 'btn btn-secondary',
+   closeText = 'Close',
+   closeCallback = () => {},
 }) => (
    <div class="modal" tabindex="-1" role="dialog" id={id}>
       <div class="modal-dialog" role="document">
@@ -24,8 +24,22 @@ const ConfirmModal = ({
                <p>{text}</p>
             </div>
             <div class="modal-footer">
-               <button type="button" onclick={confirmCallback} class={confirmClass} data-dismiss="modal">{confirmText}</button>
-               <button type="button" onclick={closeCallback} class={closeClass} data-dismiss="modal">{closeText}</button>
+               <button
+                  type="button"
+                  onclick={confirmCallback}
+                  class={confirmClass}
+                  data-dismiss="modal"
+               >
+                  {confirmText}
+               </button>
+               <button
+                  type="button"
+                  onclick={closeCallback}
+                  class={closeClass}
+                  data-dismiss="modal"
+               >
+                  {closeText}
+               </button>
             </div>
          </div>
       </div>

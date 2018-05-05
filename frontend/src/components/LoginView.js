@@ -1,7 +1,7 @@
-import { app, h } from 'hyperapp';
-import { Link, Route, location } from "@hyperapp/router"
+import { h } from 'hyperapp';
+import { Link } from '@hyperapp/router'; // eslint-disable-line
 
-const LoginView = ({state: globalState, actions: globalActions}) => {
+const LoginView = ({ state: globalState, actions: globalActions }) => {
    const actions = globalActions.auth;
    const state = globalState.auth;
    return (
@@ -18,29 +18,29 @@ const LoginView = ({state: globalState, actions: globalActions}) => {
                   placeholder="Username"
                   required autofocus
                   value={state.loginForm.username}
-                  oninput={(e) => actions.loginForm.setUsername(e.target.value)}
+                  oninput={e => actions.loginForm.setUsername(e.target.value)}
                />
 
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input
-               type="password"
-               id="inputPassword"
-               class="form-control"
-               placeholder="Password"
-               value={state.loginForm.password}
-               oninput={(e) => actions.loginForm.setPassword(e.target.value)} 
-               required
-            />
-            <button
-               class="btn btn-lg btn-primary btn-block"
-               onclick={(e) => { e.preventDefault(); actions.login() }}
-               type="submit">
+               <label for="inputPassword" class="sr-only">Password</label>
+               <input
+                  type="password"
+                  id="inputPassword"
+                  class="form-control"
+                  placeholder="Password"
+                  value={state.loginForm.password}
+                  oninput={e => actions.loginForm.setPassword(e.target.value)}
+                  required
+               />
+               <button
+                  class="btn btn-lg btn-primary btn-block"
+                  onclick={(e) => { e.preventDefault(); actions.login(); }}
+                  type="submit">
                Sign in
-            </button>
-         </form>
+               </button>
+            </form>
+         </div>
       </div>
-   </div>
-   )
+   );
 };
 
 export default LoginView;

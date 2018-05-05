@@ -1,10 +1,10 @@
+import { location } from '@hyperapp/router'; // eslint-disable-line
 import auth from './auth';
-import counter from './counter';
-import repositories from './repositories';
-import profile from './profile';
-import users from './users';
 import commandresults from './commandresults';
-import { location } from "@hyperapp/router";
+import counter from './counter';
+import profile from './profile';
+import repositories from './repositories';
+import users from './users';
 
 export default {
    auth,

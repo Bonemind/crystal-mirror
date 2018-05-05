@@ -1,6 +1,10 @@
-const METHODS = ["GET", "POST", "PUT", "DELETE"];
+/* eslint-disable class-methods-use-this */
+// Let the client handle loading and savinf of auth data
+// regardless of whether it could be static, i don't want to
+// know on the consuming side.
+const METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
-const BASE_URL = '/api'
+const BASE_URL = '/api';
 
 // Localstorage key
 const AUTH_KEY = 'auth';
@@ -14,9 +18,9 @@ class ApiClient {
       METHODS.forEach((m) => {
          const wrapped = {
             authed: (url, payload) => this.authenticatedRequest(m, url, {}, payload),
-            unauthed: (url, payload) => this.fetch(m, url, {}, payload)
+            unauthed: (url, payload) => this.fetch(m, url, {}, payload),
          };
-         const methodName = m.charAt(0) + m.toLowerCase().slice(1)
+         const methodName = m.charAt(0) + m.toLowerCase().slice(1);
          this[`authed${methodName}`] = wrapped.authed.bind(this);
          this[`unauthed${methodName}`] = wrapped.unauthed.bind(this);
       }, this);
@@ -54,7 +58,7 @@ class ApiClient {
    }
 
    authenticatedRequest(method, url, headers = {}, payload = {}) {
-      const authedHeaders = {...headers, ...{ 'Authorization': `Bearer ${this.token}` } }
+      const authedHeaders = { ...headers, ...{ Authorization: `Bearer ${this.token}` } };
       return this.fetch(method, url, authedHeaders, payload);
    }
 
@@ -62,33 +66,33 @@ class ApiClient {
    fetch(method, url, headers, payload) {
       const request = {
          method,
-         headers
+         headers,
       };
 
-      if (method !== "GET") {
-         request['body'] = JSON.stringify(payload);
-         request['headers']['content-type'] = 'application/json';
+      if (method !== 'GET') {
+         request.body = JSON.stringify(payload);
+         request.headers['content-type'] = 'application/json';
       }
 
-      //this.store.dispatch({type: REQUEST_START});
-      return fetch(`${BASE_URL}${url}`, request).then(resp => {
-         //this.store.dispatch({type: REQUEST_SUCCESS});
-         if (resp.status == 204) {
+      // this.store.dispatch({type: REQUEST_START});
+      return fetch(`${BASE_URL}${url}`, request).then((resp) => {
+         // this.store.dispatch({type: REQUEST_SUCCESS});
+         if (resp.status === 204) {
             return {};
          }
          if (resp.ok) {
             return resp.json();
          }
-         const error = {status: resp.status, body: resp.json()};
-         //this.store.dispatch({ type: REQUEST_FAILURE, payload: error })
+         const error = { status: resp.status, body: resp.json() };
+         // this.store.dispatch({ type: REQUEST_FAILURE, payload: error })
          return Promise.reject(error);
-      }).catch(e => {
-         //this.store.dispatch({type: REQUEST_FAILURE});
-         return Promise.reject(e);
-      });
+      }).catch(e =>
+         // this.store.dispatch({type: REQUEST_FAILURE});
+         Promise.reject(e));
    }
-};
+}
 
 
+/* eslint-enable class-methods-use-this */
 const apiClient = new ApiClient();
 export default apiClient;

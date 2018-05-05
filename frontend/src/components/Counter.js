@@ -8,21 +8,21 @@ import Description from './Description';
  * 'num' from 'state' and 'add'/'sub' from 'actions'
  */
 export default ({ counter: state }, { counter: actions }) =>
-  <div class="counter">
-    <Description />
-    <section>
-      <button
-        class="sub"
-        onclick={actions.sub}
-      >
+   <div class="counter">
+      <Description />
+      <section>
+         <button
+            class="sub"
+            onclick={actions.sub}
+         >
         -
-      </button>
-      <h1 class="count">{state.num}</h1>
-      <button
-        class="add"
-        onclick={actions.add}
-      >
+         </button>
+         <h1 class="count">{state.num}</h1>
+         <button
+            class="add"
+            onclick={actions.add}
+         >
         +
-      </button>
-    </section>
-  </div>;
+         </button>
+      </section>
+   </div>;

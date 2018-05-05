@@ -1,12 +1,14 @@
-import client from '../client';
 import iziToast from 'izitoast';
+import client from '../client';
 
 export default {
    loginForm: {
-      setUsername: (username) => (form) => ({...form, ...{username}}),
-      setPassword: (password) => (form) => ({...form, ...{password}}),
+      setUsername: username => form => ({ ...form, ...{ username } }),
+      setPassword: password => form => ({ ...form, ...{ password } }),
    },
-   setAuthData: ({username, userId, token, isAdmin}) => (auth) => {
+   setAuthData: ({
+      username, userId, token, isAdmin,
+   }) => (auth) => {
       client.setToken(token);
       return {
          ...auth,
@@ -14,9 +16,9 @@ export default {
             token,
             username,
             userId,
-            isAdmin
+            isAdmin,
          },
-      }
+      };
    },
    clearAuthData: () => (auth) => {
       client.setToken(null);
@@ -27,9 +29,9 @@ export default {
             token: null,
             username: null,
             userId: null,
-            isAdmin: false
-         }
-      }
+            isAdmin: false,
+         },
+      };
    },
    login: () => async (state, actions) => {
       client.setToken(null);
@@ -42,7 +44,7 @@ export default {
             title: 'Failed',
             color: 'red',
             message: 'Invalid username or password',
-            position: 'bottomRight'
+            position: 'bottomRight',
          });
          return;
       }
@@ -50,13 +52,13 @@ export default {
          username: data.user.name,
          userId: data.user.id,
          token: data.uuid,
-         isAdmin: data.user.is_admin
-      }
+         isAdmin: data.user.is_admin,
+      };
       iziToast.show({
          title: 'Success',
          color: 'green',
          message: 'Welcome back',
-         position: 'bottomRight'
+         position: 'bottomRight',
       });
       actions.loginForm.setUsername();
       actions.loginForm.setPassword();
@@ -64,9 +66,9 @@ export default {
       client.saveAuthData(authData);
    },
    logout: () => async (state, actions) => {
-      client.authedDelete('/auth/logout').catch(e => {
+      client.authedDelete('/auth/logout').catch(() => {
          /* swallow */
       });
       actions.clearAuthData();
-   }
-}
+   },
+};

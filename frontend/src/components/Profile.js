@@ -12,7 +12,7 @@ export default ({ profile: state }, { profile: actions }) => {
             class="form-control"
             type="password"
             value={state.passwordConfirm}
-            oninput={(e) => actions.updatePasswordConfirm(e.target.value)}
+            oninput={e => actions.updatePasswordConfirm(e.target.value)}
          />
       </p>
    );
@@ -34,7 +34,7 @@ export default ({ profile: state }, { profile: actions }) => {
                <h5 class="card-header">
                   Public key
                   <i
-                     style={{float: 'right', marginTop: '5px'}}
+                     style={{ float: 'right', marginTop: '5px' }}
                      class="pointer fa fa-recycle"
                      title="Generate new"
                      onclick={() => $('#sshRegen').modal()}
@@ -59,7 +59,11 @@ export default ({ profile: state }, { profile: actions }) => {
                         class="form-control"
                         value={state.passwordChangeForm.currentPassword}
                         placeholder="Current password"
-                        oninput={(e) => actions.updatePasswordChangeForm({field: 'currentPassword', value: e.target.value})}
+                        oninput={e => actions.updatePasswordChangeForm({
+                           field: 'currentPassword',
+                           value: e.target.value,
+                        })
+                        }
                      />
                   </div>
                   <div class="form-group">
@@ -70,7 +74,7 @@ export default ({ profile: state }, { profile: actions }) => {
                         class="form-control"
                         value={state.passwordChangeForm.newPassword}
                         placeholder="New password"
-                        oninput={(e) => actions.updatePasswordChangeForm({field: 'newPassword', value: e.target.value})}
+                        oninput={e => actions.updatePasswordChangeForm({ field: 'newPassword', value: e.target.value })}
                      />
                   </div>
                   <button onclick={() => actions.updatePassword()} class="btn btn-primary" type="button">Save</button>
@@ -78,5 +82,5 @@ export default ({ profile: state }, { profile: actions }) => {
             </div>
          </div>
       </div>
-   )
-}
+   );
+};

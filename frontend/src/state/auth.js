@@ -3,4 +3,4 @@ export default {
    token: null,
    userId: null,
    is_admin: false,
-}
+};

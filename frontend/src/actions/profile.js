@@ -1,5 +1,5 @@
-import client from '../client';
 import iziToast from 'izitoast';
+import client from '../client';
 
 export default {
    load: () => async (state, actions) => {
@@ -9,20 +9,18 @@ export default {
          const sshKeyData = await client.authedGet(`/users/${data.id}/ssh_key`);
          actions.updateSshKey(sshKeyData);
       } catch (e) {
-         actions.updateSshKey({public_key: null});
+         actions.updateSshKey({ public_key: null });
       }
    },
 
-   updateSshKey: ({ public_key }) => (state, actions) => {
-      return {
-         ...state,
-         ...{
-            sshKey: public_key
-         }
-      };
-   },
+   updateSshKey: ({ public_key: sshKey }) => state => ({
+      ...state,
+      ...{
+         sshKey,
+      },
+   }),
 
-   updatePasswordChangeForm: ({field, value}) => (state) => {
+   updatePasswordChangeForm: ({ field, value }) => (state) => {
       const newVal = {};
       newVal[field] = value;
 
@@ -31,48 +29,45 @@ export default {
          ...{
             passwordChangeForm: {
                ...state.passwordChangeForm,
-               ...newVal
-            }
-         }
+               ...newVal,
+            },
+         },
       };
    },
 
-   updatePasswordConfirm: (newValue) => (state) => {
-      return {
-         ...state,
-         ...{
-            passwordConfirm: newValue
-         }
-      }
-   },
+   updatePasswordConfirm: newValue => state => ({
+      ...state,
+      ...{
+         passwordConfirm: newValue,
+      },
+   }),
 
-   updatePassword: () =>  async (state, actions) => {
+   updatePassword: () => async (state, actions) => {
       const payload = {
          password_confirm: state.passwordChangeForm.currentPassword,
-         password: state.passwordChangeForm.newPassword
-      }
+         password: state.passwordChangeForm.newPassword,
+      };
       try {
-         const resp = await client.authedPut(`/users/${state.userId}/`, payload);
-      } catch(e) {
+         await client.authedPut(`/users/${state.userId}/`, payload);
+      } catch (e) {
          const body = await e.body;
          const message = body.message ? body.message : 'Failed to generate key';
          iziToast.show({
             title: 'Failure',
             color: 'red',
             message,
-            position: 'bottomRight'
+            position: 'bottomRight',
          });
          return;
       }
-      actions.updatePasswordChangeForm({field: 'currentPassword', value: ''});
-      actions.updatePasswordChangeForm({field: 'newPassword', value: ''});
+      actions.updatePasswordChangeForm({ field: 'currentPassword', value: '' });
+      actions.updatePasswordChangeForm({ field: 'newPassword', value: '' });
       iziToast.show({
          title: 'Success',
          color: 'green',
          message: 'Password updated',
-         position: 'bottomRight'
+         position: 'bottomRight',
       });
-
    },
 
    regenSshKey: () => async (state, actions) => {
@@ -80,7 +75,7 @@ export default {
       try {
          newKey = await client.authedPost(
             `/users/${state.userId}/ssh_key`,
-            {password: state.passwordConfirm}
+            { password: state.passwordConfirm },
          );
       } catch (e) {
          const body = await e.body;
@@ -89,7 +84,7 @@ export default {
             title: 'Failure',
             color: 'red',
             message,
-            position: 'bottomRight'
+            position: 'bottomRight',
          });
          return;
       }
@@ -99,17 +94,15 @@ export default {
          title: 'Success',
          color: 'green',
          message: 'SSH key generated',
-         position: 'bottomRight'
+         position: 'bottomRight',
       });
    },
 
-   updateUserData: ({name, id}) => (state, actions) => {
-      return {
-         ...state,
-         ...{
-            username: name,
-            userId: id
-         }
-      };
-   },
-}
+   updateUserData: ({ name, id }) => state => ({
+      ...state,
+      ...{
+         username: name,
+         userId: id,
+      },
+   }),
+};
