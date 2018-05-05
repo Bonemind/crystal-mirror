@@ -1,4 +1,3 @@
-
 macro validate_changeset(changeset)
    unless {{changeset}}.valid?
       halt env, status_code: 400, response: ({
@@ -20,4 +19,3 @@ def filter_hash(input_hash, keys)
    end
    return output_hash
 end
-

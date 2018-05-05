@@ -13,6 +13,7 @@ class User < Crecto::Model
       has_many :repositories, Repository, dependent: :destroy
    end
 
+   # Creates a login token
    def create_token
       token = Token.new
       token.uuid = UUID.random.to_s
@@ -21,6 +22,8 @@ class User < Crecto::Model
       return token
    end
 
+   # Creates this user's ssh key
+   # Recreates if it already exists
    def create_ssh_key(path)
       command_runner = CommandRunner.new()
       key_file = "#{path}/#{self.id}"

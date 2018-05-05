@@ -1,5 +1,6 @@
 require "io"
 
+# Named tuple containing command results
 alias CommandResult = NamedTuple(
    command: String,
    output: String,
@@ -8,12 +9,16 @@ alias CommandResult = NamedTuple(
 )
 
 
+# Commandrunner, accepts a hash containing env vars that should
+# be set for every command
 class CommandRunner
    def initialize(env : Hash(String, String) = {} of String => String)
       @env = env
    end
 
 
+   # Runs a list of commands
+   # Breaks if a command fails (returns nonzero exit code)
    def run_command_list(command_list, target_dir)
       results = [] of CommandResult
       command_list.each do |c|
@@ -23,6 +28,8 @@ class CommandRunner
       return results
    end
 
+   # Actual command runner
+   # Runs commands in a certain dir, with the env as configured
    def run_command(command, dir)
       output = IO::Memory.new
       error = IO::Memory.new

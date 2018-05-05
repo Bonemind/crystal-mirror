@@ -7,6 +7,8 @@ require "../tasks/sync"
 
 WRITABLE_FIELDS = ["from_url", "to_url", "poll_interval"]
 
+# Get the specified repository, throws if the current user
+# can't access it
 macro get_user_repo
    repository = Repo.get(Repository, env.params.url["id"].to_i)
    not_found(env) if repository.nil?
@@ -14,12 +16,15 @@ macro get_user_repo
    repository = repository.as(Repository)
 end
 
+# List this user's repos
 get "/repositories" do |env|
    env.response.content_type = "application/json"
    repositories = Repo.get_association(env.current_user.not_nil!, :repositories)
    repositories.as(Array).to_json
 end
 
+# Get the results of repository syncs, due to the potential
+# size this is paginated
 get "/repositories/:id/results/:page" do |env|
    env.response.content_type = "application/json"
    repository = Nil
@@ -28,6 +33,7 @@ get "/repositories/:id/results/:page" do |env|
    next commandresults.to_json
 end
 
+# Get a repo
 get "/repositories/:id" do |env|
    env.response.content_type = "application/json"
    repository = Nil
@@ -35,6 +41,8 @@ get "/repositories/:id" do |env|
    next repository.to_json
 end
 
+# Force a repo sync, this is asynchronous and just queues
+# the repo to be synced
 post "/repositories/:id/sync" do |env|
    env.response.content_type = "application/json"
    repository = Nil
@@ -49,6 +57,7 @@ post "/repositories/:id/sync" do |env|
 end
 
 
+# Create a new repo
 post "/repositories" do |env|
    env.response.content_type = "application/json"
    repository = Repository.new
@@ -60,6 +69,7 @@ post "/repositories" do |env|
    next repository_cs.instance.to_json
 end
 
+# Update a repo
 put "/repositories/:id" do |env|
    env.response.content_type = "application/json"
    repository = Nil
@@ -72,6 +82,7 @@ put "/repositories/:id" do |env|
    next repository_cs.instance.to_json
 end
 
+# Delete a repo
 delete "/repositories/:id" do |env|
    env.response.content_type = "application/json"
    repository = Nil

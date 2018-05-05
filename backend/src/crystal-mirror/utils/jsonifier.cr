@@ -1,3 +1,5 @@
+# Macro to allow simple jsonification of objects
+# based on instance vars and methods
 macro jsonifier(exclude_names = [] of String, include_names = [] of String, include_methods = [] of String)
    def to_json
       String.build do |str|
@@ -17,6 +19,7 @@ macro jsonifier(exclude_names = [] of String, include_names = [] of String, incl
          json.object do
             # all instance vars
             to_serialize = \{{ @type.instance_vars.map &.id.stringify }}
+
             # remove any exclusions
             to_serialize = to_serialize  - {{ exclude_names }}
 

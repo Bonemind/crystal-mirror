@@ -6,6 +6,8 @@ require "io"
 require "file_utils"
 require "dispatch"
 
+# Sync a single repo
+# Overload to allow syncing by id
 def sync_repo(id : Int64 | Int32 | Nil, ssh_key_path, git_dir)
    return if id.nil?
    repo = Repo.get(Repository, id)
@@ -14,17 +16,27 @@ def sync_repo(id : Int64 | Int32 | Nil, ssh_key_path, git_dir)
    sync_repo(repo, ssh_key_path, git_dir)
 end
 
+# The actual sync function
 def sync_repo(repo : Repository, ssh_key_path, git_dir)
+   # Check if we have an ssh key
    ssh_keyfile_path = "#{ssh_key_path}/#{repo.user_id}"
    unless File.exists?(ssh_keyfile_path)
       puts "Missing ssh key: #{ssh_keyfile_path}"
+      commandresult = Commandresult.new
+      commandresult.output = "Missing ssh key"
+      commandresult.status = 1
+      commandresult.repository = repo
+      Repo.insert(commandresult)
       return
    end
 
+   # Git ssh command
    ssh_command = "ssh -i #{ssh_keyfile_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
    target_dir = "#{git_dir}/#{repo.id}"
 
+   # Create a commandrunner with the git ssh command in the env
+   # This allows us to define which ssh-key is used for a git command
    command_runner = CommandRunner.new({"GIT_SSH_COMMAND" => ssh_command})
 
 
@@ -34,25 +46,28 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    end
 
    commands = [] of String
-   # Clone and configure the remotes if needed
-   unless Dir.exists?("#{target_dir}/.git")
+   # If we already have a repo, update the urls just in case
+   if Dir.exists?("#{target_dir}/.git")
+      commands = [] of String
+      commands << "git remote set-url remote1 #{repo.from_url}"
+      commands << "git remote set-url remote2 #{repo.to_url}"
+   else
+      # If we don't, clone the repo and configure urls
       commands << "git clone #{repo.from_url} ./"
       commands << "git remote add remote1 #{repo.from_url}"
       commands << "git remote add remote2 #{repo.to_url}"
       commands << "git remote rm origin"
-   else
-      commands = [] of String
-      commands << "git remote set-url remote1 #{repo.from_url}"
-      commands << "git remote set-url remote2 #{repo.to_url}"
    end
 
+   # Fetch and prune, this includes tags
    commands << "git fetch -pP remote1"
 
    # Push to new upstream
    commands << "git push --all remote2"
    results = command_runner.run_command_list(commands, target_dir)
-   total_log = ""
 
+   # Concat the output of all commands to a single string
+   total_log = ""
    total_status = 0
    results.each do |r|
       total_log += "> #{r[:command]}\n"
@@ -60,6 +75,8 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
       total_log += "#{r[:error]}\n"
       total_status += r[:status]
    end
+
+   # Save the results
    commandresult = Commandresult.new
    commandresult.output = total_log
    commandresult.status = total_status
@@ -67,6 +84,7 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    Repo.insert(commandresult)
 end
 
+# Helper to sunc all repos at once
 def sync_all(ssh_key_path, git_root_dir)
    repos = Repo.all(Repository)
    repos.each do |r|
@@ -74,6 +92,8 @@ def sync_all(ssh_key_path, git_root_dir)
    end
 end
 
+# Schedule any repos that need polling to poll
+# Polling handled in separate fibers
 def schedule_polls(ssh_key_path, git_root_dir)
    repositories = Repo.all(Repository).as(Array)
 
@@ -93,6 +113,7 @@ def schedule_polls(ssh_key_path, git_root_dir)
 end
 
 
+# Task wrappers for dispatch
 class SyncAllTask
    include Dispatchable
 

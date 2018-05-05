@@ -8,6 +8,8 @@ require "../utils/validator"
 require "../utils/response_macros"
 
 
+# Validates whether the user can access the requested resouce
+# gets passed in the env and the id of the owning user
 macro check_is_user_resource(env, id)
    if env.current_user.nil?
       forbidden(env)
@@ -19,6 +21,7 @@ macro check_is_user_resource(env, id)
    end
 end
 
+# Fetches a user if the logged in user should have access
 macro get_user_resource
    user = Repo.get(User, env.params.url["id"].to_i)
    not_found(env) if user.nil?
@@ -26,6 +29,8 @@ macro get_user_resource
    user = user.as(User)
 end
 
+
+# List users, only for admins
 get "/users" do |env|
    env.response.content_type = "application/json"
    forbidden(env) unless env.current_user.not_nil!.is_admin
@@ -33,6 +38,7 @@ get "/users" do |env|
    users.as(Array).to_json
 end
 
+# Get user data, only for admins or the own user
 get "/users/:id" do |env|
    env.response.content_type = "application/json"
    user = Nil
@@ -40,6 +46,7 @@ get "/users/:id" do |env|
    next user.to_json
 end
 
+# Create a user, only for admins
 post "/users" do |env|
    env.response.content_type = "application/json"
    forbidden(env) unless env.current_user.not_nil!.is_admin
@@ -54,6 +61,7 @@ post "/users" do |env|
    next user.instance.to_json
 end
 
+# Get a users repos
 get "/users/:id/repositories" do |env|
    env.response.content_type = "application/json"
    user = Nil
@@ -63,6 +71,8 @@ get "/users/:id/repositories" do |env|
    next repositories.to_json
 end
 
+# Get the public key of the user, useful to actually sync repos
+# This allows every user to have a separate key
 get "/users/:id/ssh_key" do |env|
    env.response.content_type = "application/json"
    user = Nil
@@ -77,6 +87,7 @@ get "/users/:id/ssh_key" do |env|
    next { public_key: file_contents }.to_json
 end
 
+# Force ssh key regen
 post "/users/:id/ssh_key" do |env|
    env.response.content_type = "application/json"
    user = Nil
@@ -98,6 +109,8 @@ post "/users/:id/ssh_key" do |env|
 end
 
 
+# Update a user, allows admins to create more admins
+# Users to update their password
 put "/users/:id" do |env|
    env.response.content_type = "application/json"
 
@@ -125,6 +138,7 @@ put "/users/:id" do |env|
    next user.instance.to_json
 end
 
+# Delete a user
 delete "/users/:id" do |env|
    env.response.content_type = "application/json"
 

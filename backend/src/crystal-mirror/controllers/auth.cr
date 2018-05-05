@@ -6,11 +6,13 @@ require "../models/user"
 require "../models/token"
 require "../utils/validator"
 
+# Helper to easily throw 401
 macro halt_401(env)
    env.response.content_type = "application/json"
    halt env, status_code: 401, response: ({ message: "Invalid username or password" }).to_json
 end
 
+# Delete the token used to make the request, logging a user out
 delete "/auth/logout" do |env|
    env.response.content_type = "application/json"
    user = env.current_user.not_nil!
@@ -22,6 +24,7 @@ delete "/auth/logout" do |env|
    env.response.status_code = 204
 end
 
+# Log a user in, returns a token
 post "/auth/login" do |env|
    unless env.params.json["name"]? && env.params.json["password"]?
       halt env, status_code: 400, response: {message: "Both name and password are required"}.to_json
@@ -42,9 +45,9 @@ post "/auth/login" do |env|
    next token.to_json
 end
 
+# Allows a user to discover their own data
 get "/auth/me" do |env|
    env.response.content_type = "application/json"
    user = env.current_user.not_nil!
    next user.to_json
 end
-

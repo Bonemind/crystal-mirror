@@ -2,6 +2,9 @@ require "pg"
 require "crecto"
 require "../utils/config_reader"
 
+# Repo to interact with the database
+# not to be confused with the repository model
+# that Represents git repos
 module Repo
    extend Crecto::Repo
 
@@ -14,7 +17,5 @@ module Repo
       conf.username = dbconf["user"].as_s
       conf.password = dbconf["password"].as_s
       conf.port = dbconf["port"].as_i
-      # you can also set initial_pool_size, max_pool_size, max_idle_pool_size,
-      # checkout_timeout, retry_attempts, and retry_delay
    end
 end

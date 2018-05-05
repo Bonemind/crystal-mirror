@@ -5,6 +5,7 @@ require "../models/repo"
 require "../models/token"
 
 class HTTP::Server
+  # Add the current user to the context
   class Context
     @current_user : User?
 
@@ -13,6 +14,8 @@ class HTTP::Server
 end
 
 
+# Requires all non-excluded requests to have a validate token
+# in the Authorization header of the form: Bearer <token>
 class TokenMiddleware < Kemal::Handler
    HEADER = "Authorization"
    PREFIX = "Bearer"

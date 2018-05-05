@@ -2,6 +2,7 @@ require "crecto"
 require "./user"
 require "../utils/jsonifier";
 
+# Identifies a user
 class Token < Crecto::Model
 
    schema "tokens" do
