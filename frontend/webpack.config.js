@@ -1,31 +1,57 @@
 'use strict';
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// Utility
+const glob = require("glob-all");
 const path = require('path');
-const MinifyPlugin = require('babel-minify-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const webpack = require('webpack');
-
 const convert = require('koa-connect');
 const history = require('connect-history-api-fallback');
 const proxy = require('http-proxy-middleware');
 const internalIp = require('internal-ip');
+const webpack = require('webpack');
 
-const plugins = [
-   new webpack.ProvidePlugin({
-      Util: 'exports-loader?Util!bootstrap/js/dist/util',
-      $: 'jquery-slim',
-      jquery: 'jquery-slim'
-   })
-];
+// Plugins
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MinifyPlugin = require('babel-minify-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const PurifyCSSPlugin = require("purifycss-webpack");
+const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin  = require('html-webpack-plugin');
 
 
 module.exports = (env) => {
    const isProductionMode = env === 'production';
+
+   // Base plugins needed for all modes
+   const plugins = [
+      new webpack.ProvidePlugin({
+         Util: 'exports-loader?Util!bootstrap/js/dist/util',
+         $: 'jquery-slim',
+         jquery: 'jquery-slim'
+      }),
+      new HtmlWebpackPlugin(),
+      new PurifyCSSPlugin({
+         paths: glob.sync([
+            path.join(__dirname, "src/**/*.js")
+         ]),
+         minimize: isProductionMode
+      }),
+   ];
+
    if (isProductionMode) {
       plugins.push(new UglifyJsPlugin());
       plugins.push(new MinifyPlugin());
+      plugins.push(new MiniCssExtractPlugin({
+         filename: '[name].[hash].css',
+         chunkFilename: '[id].[hash].css'
+      }));
    } else {
-      plugins.push(new BundleAnalyzerPlugin());
+      plugins.push(new BundleAnalyzerPlugin({
+         analyzerHost: '0.0.0.0',
+         openAnalyzer: false,
+      }));
+      plugins.push(new MiniCssExtractPlugin({
+         filename: '[name].css',
+         chunkFilename: '[id].css'
+      }));
    }
 
    const base = {
@@ -37,8 +63,7 @@ module.exports = (env) => {
       mode: env,
       resolve: {
          alias: {
-            $: "jquery/dist/jquery.slim.min.js",
-            jquery: "jquery/dist/jquery.slim.min.js"
+            jquery: "jquery/dist/jquery.slim.js"
          }
       },
       output: {
@@ -59,9 +84,9 @@ module.exports = (env) => {
             test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
             loader: "file-loader"
          }, {
-            test: /\.scss$/,
+            test: /\.s?[ac]ss$/,
             use: [{
-               loader: "style-loader"
+               loader: (true || isProductionMode) ? MiniCssExtractPlugin.loader : "style-loader"
             }, {
                loader: "css-loader"
             }, {
@@ -72,6 +97,8 @@ module.exports = (env) => {
       },
       plugins,
    };
+
+   // Dev proxy server
    if (env !== 'production') {
       const serve = {
          mode: 'development',
