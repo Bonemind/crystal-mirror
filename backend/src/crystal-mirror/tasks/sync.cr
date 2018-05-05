@@ -31,7 +31,7 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    end
 
    # Git ssh command
-   ssh_command = "ssh -i #{ssh_keyfile_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+   ssh_command = "ssh -i #{ssh_keyfile_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=error"
 
    target_dir = "#{git_dir}/#{repo.id}"
 
@@ -105,7 +105,7 @@ def schedule_polls(ssh_key_path, git_root_dir)
       elsif last_result.nil?
          # We want to poll and have never successfully polled, poll
          SyncRepoTask.dispatch(r, ssh_key_path, git_root_dir)
-      elsif (Time.now - last_result.created_at.not_nil!).total_minutes > r.poll_interval.not_nil!
+      elsif (Time.now - last_result.created_at.not_nil!).total_minutes > r.poll_interval.not_nil!.to_i
          # Our last poll is older than our defined interval, poll
          SyncRepoTask.dispatch(r, ssh_key_path, git_root_dir)
       end
