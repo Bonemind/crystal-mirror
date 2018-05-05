@@ -1,4 +1,4 @@
-FROM jrei/crystal-alpine
+FROM jrei/crystal-alpine as builder
 
 WORKDIR /tmp/app
 
@@ -14,9 +14,12 @@ RUN cp ./run.sh /tmp/app/build
 ADD ./migrations /tmp/app/build/migrations
 
 FROM jrei/crystal-alpine
+
+RUN apk update && apk add openssh git
+
 WORKDIR /app/
 
-COPY --from=0 /tmp/app/build /app/
+COPY --from=builder /tmp/app/build /app/
 
 RUN chmod +x run.sh
 RUN mkdir /srv/crmirror && mkdir /srv/crmirror/mirror_keys && mkdir /srv/crmirror/git_repos
