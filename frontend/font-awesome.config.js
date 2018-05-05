@@ -6,6 +6,6 @@ module.exports = {
     "icons": true,
 
     "larger": false,
-    "path": false,
+    "path": true,
   }
 };
