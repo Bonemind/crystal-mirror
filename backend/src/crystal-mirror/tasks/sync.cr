@@ -63,7 +63,7 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
    commands << "git fetch -pP remote1"
 
    # Push to new upstream
-   commands << "git push --all remote2"
+   commands << "git push --prune remote2 +refs/remotes/remote1/*:refs/heads/* +refs/tags/*:refs/tags/*"
    results = command_runner.run_command_list(commands, target_dir)
 
    # Concat the output of all commands to a single string
