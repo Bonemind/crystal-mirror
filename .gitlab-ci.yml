@@ -8,19 +8,20 @@ services:
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
 
-build-master:
+build-master-backend:
   stage: build
   script:
     - cd backend
-    - docker build --pull -t bonemind/crmirror .
-    - docker push bonemind/crmirror
+    - docker build --pull -t bonemind/crmirror-backend .
+    - docker push bonemind/crmirror-backend
   only:
     - master
 
-build:
+build-master-frontend:
   stage: build
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
-      # - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-  except:
+    - cd frontend
+    - docker build --pull -t bonemind/crmirror-frontend .
+    - docker push bonemind/crmirror-frontend
+  only:
     - master
