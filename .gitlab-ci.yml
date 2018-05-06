@@ -13,7 +13,7 @@ build-master:
   script:
     - cd backend
     - docker build --pull -t bonemind/crmirror .
-      # - docker push "$CI_REGISTRY_IMAGE"
+    - docker push bonemind/crmirror
   only:
     - master
 
