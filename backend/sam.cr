@@ -11,6 +11,8 @@ require "io"
 require "crypto/bcrypt/password"
 require "yaml"
 
+MIGRATION_RETRIES = 3
+
 def wait_for_dispatch
    # Wait for dispatch to finish
    # Sam tasks would exit before our fibers have done their work otherwise
@@ -23,7 +25,7 @@ end
 
 configure_dispatch
 
-Sam.namespace "db" do
+def get_migrator
    config = get_current_config
    dbconfig = config["db"]
    migrator = Migrate::Migrator.new(
@@ -33,12 +35,32 @@ Sam.namespace "db" do
       "version", # Version table name
       "version" # Version column name
    )
+   return migrator
+end
+
+Sam.namespace "db" do
 
    task "migrate" do
-      migrator.to_latest
+      retries = 0
+      # Retry a few times, giving postgres the time to start
+      # when in a docker-compose env
+      while retries < MIGRATION_RETRIES
+         begin
+            migrator = get_migrator
+            migrator.to_latest
+            break
+         rescue ex
+            retries += 1
+            puts ex.message
+            puts "Migration failed, retrying in 5 seconds..." unless retries >= MIGRATION_RETRIES
+            sleep 5
+         end
+         puts "Couldn't migrate"
+      end
    end
 
    task "rollback" do
+      migrator = get_migrator
       migrator.down
    end
 end
