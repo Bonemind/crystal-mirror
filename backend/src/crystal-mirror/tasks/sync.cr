@@ -45,17 +45,31 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
       Dir.mkdir_p(target_dir)
    end
 
-   commands = [] of String
+   commands = [] of String | PreparedCommand
    # If we already have a repo, update the urls just in case
    if Dir.exists?("#{target_dir}/.git")
-      commands = [] of String
-      commands << "git remote set-url remote1 #{repo.from_url}"
-      commands << "git remote set-url remote2 #{repo.to_url}"
+      commands << {
+         command_string: "git remote set-url remote1 \"$REPO1\"",
+         vars: {"REPO1" => repo.from_url.not_nil!}
+      }
+      commands << {
+         command_string: "git remote set-url remote2 \"$REPO2\"",
+         vars: {"REPO2" => repo.to_url.not_nil!}
+      }
    else
       # If we don't, clone the repo and configure urls
-      commands << "git clone #{repo.from_url} ./"
-      commands << "git remote add remote1 #{repo.from_url}"
-      commands << "git remote add remote2 #{repo.to_url}"
+      commands << {
+         command_string: "git clone \"$REPO1\" ./",
+         vars: {"REPO1" => repo.from_url.not_nil!}
+      }
+      commands << {
+         command_string: "git remote add remote1 \"$REPO1\"",
+         vars: {"REPO1" => repo.from_url.not_nil!}
+      }
+      commands << {
+         command_string: "git remote add remote2 \"$REPO2\"",
+         vars: {"REPO2" => repo.from_url.not_nil!}
+      }
       commands << "git remote rm origin"
    end
 
