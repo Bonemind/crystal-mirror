@@ -6,14 +6,6 @@ import ConfirmModal from './ConfirmModal';
 
 const createRepoLine = (repo, actions) => (
    <tr>
-      <ConfirmModal
-         id={`deleteModal${repo.id}`}
-         title="Remove repository"
-         text="Are you sure you want to remove this repository?"
-         confirmClass="btn btn-danger"
-         confirmText="Delete"
-         confirmCallback={() => actions.deleteRepo(repo)}
-      />
       <td>
          <i
             onclick={() => location.actions.go(`/repositories/${repo.id}/results`)}
@@ -24,6 +16,15 @@ const createRepoLine = (repo, actions) => (
       <td>{repo.to_url}</td>
       <td>{repo.poll_interval}</td>
       <td>
+
+         <ConfirmModal
+            id={`deleteModal${repo.id}`}
+            title="Remove repository"
+            text="Are you sure you want to remove this repository?"
+            confirmClass="btn btn-danger"
+            confirmText="Delete"
+            confirmCallback={() => actions.deleteRepo(repo)}
+         />
          <i class="pointer fa fa-edit" onclick={() => actions.addWorkingCopy(repo)} />
          <i class="pointer fa fa-refresh" onclick={() => actions.forceSync(repo)} />
          <i class="pointer fa fa-trash" onclick={() => $(`#deleteModal${repo.id}`).modal()} />

@@ -4,6 +4,10 @@ import ConfirmModal from './ConfirmModal';
 
 const createUserLine = (user, actions, currentUser) => (
    <tr>
+      <td>{user.name}</td>
+      <td>&nbsp;</td>
+      <td><i class={`fa fa-${user.is_admin ? 'check' : 'times'}`} /></td>
+      <td>
       <ConfirmModal
          id={`deleteModal${user.id}`}
          title="Remove user"
@@ -12,14 +16,12 @@ const createUserLine = (user, actions, currentUser) => (
          confirmText="Delete"
          confirmCallback={() => actions.deleteUser(user)}
       />
-      <td>{user.name}</td>
-      <td>&nbsp;</td>
-      <td><i class={`fa fa-${user.is_admin ? 'check' : 'times'}`} /></td>
-      { currentUser.isAdmin ?
-         (<td>
+      { currentUser.isAdmin &&
+         (<div>
             <i class="pointer fa fa-edit" onclick={() => actions.addWorkingCopy(user)} />
             <i class="pointer fa fa-trash" onclick={() => $(`#deleteModal${user.id}`).modal()} />
-         </td>) : <td>&nbsp;</td>}
+         </div>)}
+      </td>
    </tr>
 );
 

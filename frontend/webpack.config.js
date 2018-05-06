@@ -32,6 +32,12 @@ module.exports = (env) => {
          paths: glob.sync([
             path.join(__dirname, "src/**/*.js")
          ]),
+         purifyOptions: {
+            // Should be iziToast, not oast, but due to:
+            // https://github.com/purifycss/purifycss/issues/145
+            // We can only use part of the name
+            whitelist: ['*oast*', '*modal*']
+         },
          minimize: isProductionMode
       }),
    ];
