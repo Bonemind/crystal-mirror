@@ -15,7 +15,7 @@ for the api service:
     volumes:
      # SSH key location, you probably really want this as persistent storage
      - "<Host path>:/srv/crmirror/mirror_keys/"
-     # Git mirrors location, you probably really want this as persistent storage
+     # Git mirrors location, not critical, but saves cloning on every container restart
      - "<Host path>:/srv/crmirror/git_repos/"
      # Config file location
      - "<Host path>:/app/config.yml"
