@@ -7,16 +7,16 @@ Support for hooks and such is yet to come.
 ## Installation
 
 The easiest way to get started is to run de docker-compose file which will spin
-up the back and frontend, as well as a postgres database to store data into.
+up the back and frontend, as well as a postgres database to store data.
 
-Alternatively, you could `crystal build sam.cr` and `crystal build /src/crystal-mirror.cr`
+Alternatively, you could `crystal build sam.cr` and `crystal build src/crystal-mirror.cr`
 for the backend, 
 Backend:
 
    - Install the crystal compiler
    - `shards install`
    - `crystal build sam.cr`
-   - `crystal build /src/crystal-mirror.cr`
+   - `crystal build src/crystal-mirror.cr`
 
 This will leave you with two executables, `sam.cr` is used for management tasks,
 whereas `crystal-mirror` is the actual backend. Both of these expect a `config.yml`
