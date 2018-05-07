@@ -8,15 +8,15 @@ const createUserLine = (user, actions, currentUser) => (
       <td>&nbsp;</td>
       <td><i class={`fa fa-${user.is_admin ? 'check' : 'times'}`} /></td>
       <td>
-      <ConfirmModal
-         id={`deleteModal${user.id}`}
-         title="Remove user"
-         text="Are you sure you want to remove this user?"
-         confirmClass="btn btn-danger"
-         confirmText="Delete"
-         confirmCallback={() => actions.deleteUser(user)}
-      />
-      { currentUser.isAdmin &&
+         <ConfirmModal
+            id={`deleteModal${user.id}`}
+            title="Remove user"
+            text="Are you sure you want to remove this user?"
+            confirmClass="btn btn-danger"
+            confirmText="Delete"
+            confirmCallback={() => actions.deleteUser(user)}
+         />
+         { currentUser.isAdmin &&
          (<div>
             <i class="pointer fa fa-edit" onclick={() => actions.addWorkingCopy(user)} />
             <i class="pointer fa fa-trash" onclick={() => $(`#deleteModal${user.id}`).modal()} />
