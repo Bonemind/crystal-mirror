@@ -2,3 +2,4 @@ backend/doc/
 backend/lib/
 backend/bin/
 backend/.shards/
+backend/config.yml

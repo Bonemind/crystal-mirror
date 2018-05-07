@@ -9,7 +9,7 @@ RUN mkdir /tmp/app/build
 
 RUN crystal build sam.cr -o /tmp/app/build/sam.cr --release
 RUN crystal build src/crystal-mirror.cr -o /tmp/app/build/crystal-mirror --release
-RUN cp ./config.yml /tmp/app/build
+RUN cp ./config.example.yml /tmp/app/build/config.yml
 RUN cp ./run.sh /tmp/app/build
 ADD ./migrations /tmp/app/build/migrations
 
