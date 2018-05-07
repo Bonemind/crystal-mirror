@@ -21,8 +21,8 @@ for the api service:
      - "<Host path>:/app/config.yml"
 ```
 
-Alternatively, you could `crystal build sam.cr` and `crystal build src/crystal-mirror.cr`
-for the backend, 
+Alternatively:
+
 Backend:
 
    - Install the crystal compiler
