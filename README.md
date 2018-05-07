@@ -6,8 +6,20 @@ Support for hooks and such is yet to come.
 
 ## Installation
 
-The easiest way to get started is to run de docker-compose file which will spin
+The easiest way to get started is to run the docker-compose file which will spin
 up the back and frontend, as well as a postgres database to store data.
+
+If you go the docker-compose route, you might want to mount the following volumes
+for the api service:
+```
+    volumes:
+     # SSH key location, you probably really want this as persistent storage
+     - "<Host path>:/srv/crmirror/mirror_keys/"
+     # Git mirrors location, you probably really want this as persistent storage
+     - "<Host path>:/srv/crmirror/git_repos/"
+     # Config file location
+     - "<Host path>:/app/config.yml"
+```
 
 Alternatively, you could `crystal build sam.cr` and `crystal build src/crystal-mirror.cr`
 for the backend, 
