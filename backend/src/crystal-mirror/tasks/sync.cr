@@ -68,7 +68,7 @@ def sync_repo(repo : Repository, ssh_key_path, git_dir)
       }
       commands << {
          command_string: "git remote add remote2 \"$REPO2\"",
-         vars: {"REPO2" => repo.from_url.not_nil!}
+         vars: {"REPO2" => repo.to_url.not_nil!}
       }
       commands << "git remote rm origin"
    end
