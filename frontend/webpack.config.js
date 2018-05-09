@@ -27,7 +27,9 @@ module.exports = (env) => {
          $: 'jquery-slim',
          jquery: 'jquery-slim'
       }),
-      new HtmlWebpackPlugin(),
+      new HtmlWebpackPlugin({
+         title: 'Crystal mirror'
+      }),
       new PurifyCSSPlugin({
          paths: glob.sync([
             path.join(__dirname, "src/**/*.js")
